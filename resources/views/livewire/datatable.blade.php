@@ -21,7 +21,7 @@
             <table id="livewire-datatable" class="table table-hover livewire-datatable"
                 wire:loading.class="datatable-loading" style="width: 100%">
                 <thead>
-                    <tr>
+                    <tr id="livewire-datatable-th">
                         <!-- Add `sorting_asc` or `sorting_desc` class to the `th` tag that is initially sorted -->
                         <th class="sorting sorting_asc">NAME</th>
                         <th class="sorting">EMAIL</th>
@@ -49,8 +49,9 @@
                 </tfoot>
                 <tbody>
                     @forelse ($users as $user)
-                    <tr>
-                        <td>{{ $user->name }}</td>
+                    <tr id="livewire-datatable-tr-{{ $user->id }}">
+                        <td><button data-id="{{ $user->id }}" type="button" class="btn btn-primary btn-sm extra-columns"
+                                style="display: none">+</button>&nbsp;{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->phone }}</td>
                         <td>{{ $user->gender }}</td>
@@ -111,10 +112,6 @@ function update_user(user) {
     var obj = JSON.parse(JSON.stringify(user));
     Livewire.emit('editUser', obj);
 }
-
-window.addEventListener('resize', (e) => {
-    cellVisibility();
-}, true);
 
 function cellVisibility() {
     var tableContainer = document.getElementById('table-container');
@@ -178,15 +175,21 @@ function cellVisibility() {
         });
     tableWidthCache(tableContainerLength, allIndx.join(','));
 
-    if (hiddenIndx.length > 0)
+    if (hiddenIndx.length > 0) {
+        showButtonForExtraColumns();
         Array.from(livewireDatatable.querySelectorAll(hiddenIndx.join(', '))).map((ele) => {
             ele.style.display = 'none';
+            ele.classList.add('cell-hidden');
         });
+    } else
+        showButtonForExtraColumns('hide');
 
     if (shownIndx.length > 0)
         Array.from(livewireDatatable.querySelectorAll(shownIndx.join(', '))).map((ele) => {
             ele.style.removeProperty('display');
+            ele.classList.remove('cell-hidden')
         });
+
 }
 
 function tableWidthCache(tableContainerLength, value) {
@@ -194,11 +197,91 @@ function tableWidthCache(tableContainerLength, value) {
         localStorage.setItem("livewire-datatable-length", tableContainerLength);
         localStorage.setItem("livewire-datatable-cache", value);
     } else
-        if (tableContainerLength > localStorage.getItem("livewire-datatable-length")) {
-            localStorage.setItem("livewire-datatable-length", value);
-            localStorage.setItem("livewire-datatable-cache", value);
-        }
+    if (tableContainerLength > localStorage.getItem("livewire-datatable-length")) {
+        localStorage.setItem("livewire-datatable-length", value);
+        localStorage.setItem("livewire-datatable-cache", value);
+    }
 }
+
+function displayHiddenCells(e) {
+    var btn = e.target;
+    var id = btn.getAttribute('data-id');
+    var tr = document.getElementById('livewire-datatable-tr-' + id);
+    var thead_rows = Array.from(document.getElementById('livewire-datatable-th').querySelectorAll('th.cell-hidden'));
+    var livewireDatatable = document.getElementById("livewire-datatable");
+
+    if (document.getElementById('extra-row-' + id) === null) {
+        btn.innerHTML = '-';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-danger');
+
+        var row = livewireDatatable.insertRow(parseInt(tr.rowIndex) + parseInt(1));
+        row.setAttribute('id', 'extra-row-' + id);
+
+        var cell = row.insertCell(0);
+        cell.setAttribute('colspan', tr.cells.length);
+
+        var ul = document.createElement("ul");
+        ul.classList.add("list-group");
+
+        Array.from(tr.querySelectorAll('td.cell-hidden')).map((ele, inx) => {
+            var li = document.createElement("li");
+            li.classList.add("list-group-item");
+
+            var b = document.createElement("b");
+            b.innerHTML = thead_rows[inx].innerHTML;
+
+            li.appendChild(b);
+            li.innerHTML = li.innerHTML + ': ' + ele.innerHTML;
+            
+            ul.appendChild(li);
+        });
+
+        cell.appendChild(ul);
+    } else {
+        btn.innerHTML = '+';
+        btn.classList.remove('btn-danger');
+        btn.classList.add('btn-primary');
+        document.getElementById('extra-row-' + id).remove();
+    }
+}
+
+function showButtonForExtraColumns(type = "show") {
+    var extraColumns = Array.from(document.querySelectorAll('.extra-columns'));
+    extraColumns.map((ele, inx) => {
+        ele.removeEventListener("click", displayHiddenCells);
+
+        if (type === 'show')
+            ele.style.removeProperty('display');
+        else
+            ele.style.display = 'none';
+
+        ele.addEventListener("click", displayHiddenCells);
+    });
+}
+
+function resetButtonForExtraColumns() {
+    var extraColumns = Array.from(document.querySelectorAll('.extra-columns'));
+    extraColumns.map((ele, inx) => {
+        ele.innerHTML = '+';
+        ele.classList.remove('btn-danger');
+        ele.classList.add('btn-primary');
+        var id = ele.getAttribute('data-id');
+        if(document.getElementById('extra-row-' + id) !== null)
+            document.getElementById('extra-row-' + id).remove();
+    });
+}
+
+window.addEventListener('resize', (e) => {
+    resetButtonForExtraColumns();
+    cellVisibility();
+}, true);
+
+document.addEventListener("DOMContentLoaded", () => {
+    Livewire.hook('element.updated', (el, component) => {
+        cellVisibility();
+    })
+});
 
 if (localStorage.getItem("livewire-datatable-cache") !== null) {
     localStorage.removeItem("livewire-datatable-cache");

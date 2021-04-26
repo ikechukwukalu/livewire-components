@@ -14,16 +14,16 @@
                     <div class="row justify-content-center">
                         <div class="col-md-12">
                             @if (session()->has('success'))
-                                <div class="alert alert-success alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <strong>Success!</strong> {{ session('success') }}
-                                </div>
+                            <div class="alert alert-success alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Success!</strong> {{ session('success') }}
+                            </div>
                             @endif
                             @if (session()->has('fail'))
-                                <div class="alert alert-danger alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <strong>Failed!</strong> {{ session('fail') }}
-                                </div>
+                            <div class="alert alert-danger alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Failed!</strong> {{ session('fail') }}
+                            </div>
                             @endif
                         </div>
                         <div class="col-md-6">
@@ -125,10 +125,20 @@
 
 <script>
 Livewire.on("editUser", (obj) => {
+    var modalBackDrop = document.createElement("div");
+    modalBackDrop.setAttribute('id', 'modal-backdrop');
+    modalBackDrop.setAttribute('class', 'modal-backdrop fade show');
+
+    var modalBackDropLoader = document.createElement("div");
+    modalBackDropLoader.setAttribute('id', 'modal-backdrop-loader');
+    modalBackDropLoader.setAttribute('class', 'w-100 h-100');
+
+    modalBackDrop.appendChild(modalBackDropLoader);
+
     @this.edit_user(obj);
-    $("body").append('<div id="modal-backdrop" class="modal-backdrop fade show"><div id="modal-backdrop-loader" class="w-100 h-100"></div></div>');
+    document.querySelector('body').appendChild(modalBackDrop);
 });
 Livewire.on("closeModal", () => {
-    $('#modal-backdrop').remove();
+    document.getElementById('modal-backdrop').remove();
 });
 </script>
