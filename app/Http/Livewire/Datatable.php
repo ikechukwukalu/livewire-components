@@ -62,15 +62,12 @@ class Datatable extends Component
         if ($this->sort == "columns") {
             return User::orderBy($this->order_by[0], $this->order_by[1])->paginate($this->pages_displayed);
         }
-        // Not recommended for large records
         elseif ($this->sort == "latest") {
             return User::orderBy('id', 'desc')->paginate($this->pages_displayed);
         }
-        // 2nd best, but not for records that exceeds 5k
         else {
             return User::paginate($this->pages_displayed);
         }
-        // Best performance, but not for records that exceeds 5k
     }
 
     private function with_search_numbered_paginator()
@@ -87,7 +84,7 @@ class Datatable extends Component
                     ->orWhere('city', 'like', '%' . $q . '%')
                     ->orWhere('address', 'like', '%' . $q . '%');
             })
-                ->orderBy($this->order_by[0], $this->order_by[1]) // Not recommended for large records
+                ->orderBy($this->order_by[0], $this->order_by[1])
                 ->paginate($this->pages_displayed);
         } elseif ($this->sort == "latest") {
             return User::where(function ($query) use ($q) {
@@ -100,7 +97,7 @@ class Datatable extends Component
                     ->orWhere('city', 'like', '%' . $q . '%')
                     ->orWhere('address', 'like', '%' . $q . '%');
             })
-                ->orderBy('id', 'desc') // Not for records that exceeds 5k
+                ->orderBy('id', 'desc')
                 ->paginate($this->pages_displayed);
         } else {
             return User::where(function ($query) use ($q) {
@@ -115,7 +112,6 @@ class Datatable extends Component
             })
                 ->paginate($this->pages_displayed);
         }
-        // Not for records that exceeds 5k
     }
 
     private function implement_simple_paginator()
