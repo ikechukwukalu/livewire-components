@@ -114,6 +114,7 @@ function update_user(user) {
 }
 
 function cellVisibility() {
+    resetButtonForExtraColumns();
     var tableContainer = document.getElementById('table-container');
     var livewireDatatable = document.getElementById("livewire-datatable");
     var _cells = Array.from(livewireDatatable.rows[0].cells);
@@ -129,13 +130,19 @@ function cellVisibility() {
     }
 
     if (
-        livewireDatatableCache !== null &&
-        tableContainerLength == localStorage.getItem("livewire-datatable-length")
+        livewireDatatableCache !== null
     )
         _cells.map((ele, inx) => {
             var cellIndex = parseInt(inx) + parseInt(1);
-            allIndx.push(cellIndex);
-            var eleWidth = livewireDatatableCache[inx];
+            if (ele.style.display === 'none') {
+                ele.style.visibility = 'hidden';
+                ele.style.removeProperty('display');
+                var eleWidth = ele.offsetWidth;
+                ele.style.display = 'none';
+                ele.style.removeProperty('visibility');
+            } else
+                var eleWidth = livewireDatatableCache[inx];
+            allIndx.push(eleWidth);
 
             livewireDatatableLength = parseInt(livewireDatatableLength) + parseInt(eleWidth);
             if (livewireDatatableLength >= tableContainerLength) {
@@ -198,7 +205,9 @@ function tableWidthCache(tableContainerLength, value) {
         localStorage.setItem("livewire-datatable-cache", value);
     } else
     if (tableContainerLength > localStorage.getItem("livewire-datatable-length")) {
-        localStorage.setItem("livewire-datatable-length", value);
+        localStorage.removeItem("livewire-datatable-length");
+        localStorage.removeItem("livewire-datatable-cache");
+        localStorage.setItem("livewire-datatable-length", tableContainerLength);
         localStorage.setItem("livewire-datatable-cache", value);
     }
 }
@@ -233,7 +242,7 @@ function displayHiddenCells(e) {
 
             li.appendChild(b);
             li.innerHTML = li.innerHTML + ': ' + ele.innerHTML;
-            
+
             ul.appendChild(li);
         });
 
@@ -267,13 +276,12 @@ function resetButtonForExtraColumns() {
         ele.classList.remove('btn-danger');
         ele.classList.add('btn-primary');
         var id = ele.getAttribute('data-id');
-        if(document.getElementById('extra-row-' + id) !== null)
+        if (document.getElementById('extra-row-' + id) !== null)
             document.getElementById('extra-row-' + id).remove();
     });
 }
 
 window.addEventListener('resize', (e) => {
-    resetButtonForExtraColumns();
     cellVisibility();
 }, true);
 
@@ -285,6 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 if (localStorage.getItem("livewire-datatable-cache") !== null) {
     localStorage.removeItem("livewire-datatable-cache");
+    localStorage.removeItem("livewire-datatable-length");
     setTimeout(() => {
         cellVisibility();
     }, 500);
