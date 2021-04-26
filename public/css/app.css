@@ -10048,11 +10048,13 @@ h3 {
 table.livewire-datatable > thead .sorting_asc::after {
   content: "↑" !important;
   color: #222 !important;
+  padding-left: 5px !important;
 }
 
 table.livewire-datatable > thead .sorting_desc::after {
   content: "↓" !important;
   color: #222 !important;
+  padding-left: 5px !important;
 }
 
 table.livewire-datatable > thead .sorting::after {
@@ -10066,11 +10068,13 @@ table.livewire-datatable > thead th {
   cursor: pointer !important;
 }
 
-table.datatable-loading tbody, #modal-backdrop-loader {
+table.datatable-loading tbody,
+#modal-backdrop-loader {
   position: relative;
 }
 
-table.datatable-loading tbody:after, #modal-backdrop-loader:after {
+table.datatable-loading tbody:after,
+#modal-backdrop-loader:after {
   position: absolute;
   top: 0;
   left: 0;
@@ -10082,4 +10086,17 @@ table.datatable-loading tbody:after, #modal-backdrop-loader:after {
   background-repeat: no-repeat;
   background-size: 50px 50px;
   content: "";
+}
+
+#livewire-datatable td {
+  min-width: 100px !important;
+  min-width: 150px !important;
+}
+
+#livewire-datatable {
+  width: 100% !important;
+}
+
+.modal {
+  overflow: auto !important;
 }

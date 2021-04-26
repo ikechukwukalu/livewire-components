@@ -19,7 +19,7 @@
     <div class="col-md-12 mt-3 mb-3">
         <div class="table-responsive">
             <table id="livewire-datatable" class="table table-hover livewire-datatable"
-                wire:loading.class="datatable-loading" style="width: 100%">
+                wire:loading.class="datatable-loading">
                 <thead>
                     <tr id="livewire-datatable-th">
                         <!-- Add `sorting_asc` or `sorting_desc` class to the `th` tag that is initially sorted -->
@@ -50,8 +50,13 @@
                 <tbody>
                     @forelse ($users as $user)
                     <tr id="livewire-datatable-tr-{{ $user->id }}">
-                        <td><button data-id="{{ $user->id }}" type="button" class="btn btn-primary btn-sm extra-columns"
-                                style="display: none">+</button>&nbsp;{{ $user->name }}</td>
+                        <td>
+                            <div class="row-first">
+                                <button data-id="{{ $user->id }}" type="button"
+                                    class="btn btn-primary btn-sm extra-columns"
+                                    style="display: none">+</button>&nbsp;&nbsp;<span>{{ $user->name }}</span>
+                            </div>
+                        </td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->phone }}</td>
                         <td>{{ $user->gender }}</td>
@@ -146,7 +151,7 @@ function cellVisibility() {
 
             livewireDatatableLength = parseInt(livewireDatatableLength) + parseInt(eleWidth);
             if (livewireDatatableLength >= tableContainerLength) {
-                if (cellIndex !== 1 && cellIndex !== 2) {
+                if (cellIndex !== 1) {
                     hiddenIndx.push('th:nth-child(' + cellIndex + ')');
                     hiddenIndx.push('td:nth-child(' + cellIndex + ')');
                 }
@@ -171,7 +176,7 @@ function cellVisibility() {
 
             livewireDatatableLength = parseInt(livewireDatatableLength) + parseInt(eleWidth);
             if (livewireDatatableLength >= tableContainerLength) {
-                if (cellIndex !== 1 && cellIndex !== 2) {
+                if (cellIndex !== 1) {
                     hiddenIndx.push('th:nth-child(' + cellIndex + ')');
                     hiddenIndx.push('td:nth-child(' + cellIndex + ')');
                 }
@@ -287,7 +292,9 @@ window.addEventListener('resize', (e) => {
 
 document.addEventListener("DOMContentLoaded", () => {
     Livewire.hook('element.updated', (el, component) => {
-        cellVisibility();
+        console.log(component.el.id);
+        if (component.el.id !== 'myModal')
+            cellVisibility();
     })
 });
 

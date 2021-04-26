@@ -19,11 +19,11 @@ Route::get('/', function () {
 
 Route::get('datatable', function () {
     return view('datatable', [
-        'order_by' => ['name', 'asc'], // ['columan', 'asc|desc']
-        'page_options' => [10, 15, 25, 50, 100],
+        'order_by' => ['name', 'asc'], // ['column', 'asc|desc'] is effective if [sort] is set to columns
+        'page_options' => [5, 10, 15, 25, 50, 100],
         'pages_displayed' => 10, // default page_options
-        'sort' => 'latest', // columns - okay, latest - very good, null - fastest
-        'maxP' => 20000 // Max allowed for numbered paginator | switch to simple paginator
+        'sort' => 'latest', // OrderBy - [columns] | speed is okay, [latest] | speed is very good, [null] | speed is fastest
+        'maxP' => 5000 // Max allowed for numbered paginator | switch to simple paginator
     ]);
 })->name('datatable');
 
