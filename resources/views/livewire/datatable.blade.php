@@ -39,44 +39,37 @@
     </div>
     <div class="col-md-12 mt-3 mb-3">
         <div class="table-responsive">
-            <table id="livewire-datatable" class="table table-hover livewire-datatable"
-                wire:target="init, previousPage, nextPage, gotoPage" wire:loading.class="datatable-loading">
+            <table wire:init="make_datatable" id="livewire-datatable" class="table table-hover livewire-datatable"
+                wire:target="make_datatable, fetch, previousPage, nextPage, gotoPage, search, resort"
+                wire:loading.class="datatable-loading">
                 <thead>
                     <tr id="livewire-datatable-th">
                         @if($sort == 'columns')
-                        <th class="sorting sorting_asc">NAME</th>
-                        <th>EMAIL</th>
-                        <th>PHONE</th>
-                        <th>GENDER</th>
-                        <th>COUNTRY</th>
-                        <th>STATE</th>
-                        <th>CITY</th>
-                        <th>ADDRESS</th>
-                        <th>ACTION</th>
+                            @foreach ($columns as $column)
+                                @if ($order_by[0] == $column['sort'])
+                                    @if ($order_by[1])
+                                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">{{ strtoupper($column['name']) }}</th>
+                                    @else
+                                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">{{ strtoupper($column['name']) }}</th>
+                                    @endif
+                                @else
+                                    <th class="sorting th_hover"  wire:click="resort('{{ $column['sort'] }}')">{{ strtoupper($column['name']) }}</th>
+                                @endif
+                            @endforeach
                         @else
-                        <th>NAME</th>
-                        <th>EMAIL</th>
-                        <th>PHONE</th>
-                        <th>GENDER</th>
-                        <th>COUNTRY</th>
-                        <th>STATE</th>
-                        <th>CITY</th>
-                        <th>ADDRESS</th>
-                        <th>ACTION</th>
+                            @foreach ($columns as $column)
+                                <th>{{ strtoupper($column['name']) }}</th>
+                            @endforeach
                         @endif
+                        <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>NAME</th>
-                        <th>EMAIL</th>
-                        <th>PHONE</th>
-                        <th>GENDER</th>
-                        <th>COUNTRY</th>
-                        <th>STATE</th>
-                        <th>CITY</th>
-                        <th>ADDRESS</th>
-                        <th>ACTION</th>
+                        @foreach ($columns as $column)
+                            <th>{{ strtoupper($column['name']) }}</th>
+                        @endforeach
+                        <th>{{ __('Action') }}</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -126,7 +119,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td align="center" colspan="9">{{ __('No matching records') }}</td>
+                        <td align="center" colspan="9">{{ $load_state }}</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -135,34 +128,20 @@
     </div>
     <div class="col-md-6 pl-3">
         <div class="float-left form-inline">
-            <label>Showing {{ $showing['page'] }} to {{ $showing['set'] }} of {{ $showing['total'] }} entries</label>
+            <label>Showing {{ $current_page }} to {{ $set }} of {{ $total }} entries</label>
         </div>
     </div>
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
-            {{ $users->onEachSide(2)->links() }}
+            @if(count($users) > 0)
+                {{ $users->onEachSide(1)->links() }}
+            @endif
         </div>
     </div>
 </div>
 @livewire('datatable-modal')
 
 <script>
-Livewire.on('showPage', page => {
-    document.getElementById('card-header').innerHTML = 'Livewire Datatable - <b>Page:</b> ' + page;
-});
-Livewire.on('docMake', params => {
-    if (params['type'] === 'pdf') {
-        var widths = [
-            'auto', 'auto', 'auto', 'auto',
-            'auto', 'auto', 'auto', 'auto'
-        ];
-        export_pdf(widths, params['body']);
-    } else if (params['type'] === 'excel')
-        export_excel(params['body']);
-    else if (params['type'] === 'csv')
-        export_csv(params['body']);
-});
-
 function export_pdf(widths, body) {
     var docDefinition = {
         content: [{
@@ -189,7 +168,7 @@ function export_pdf(widths, body) {
         },
     }
 
-    pdfMake.createPdf(docDefinition).open();
+    pdfMake.createPdf(docDefinition).download();
 }
 
 function export_excel(body) {
@@ -225,11 +204,11 @@ function export_csv(body) {
         },
     ];
 
-    const options = { 
+    const options = {
         fieldSeparator: ',',
         quoteStrings: '"',
         decimalSeparator: '.',
-        showLabels: true, 
+        showLabels: true,
         showTitle: true,
         title: 'Livewire-datatable',
         useTextFile: false,
@@ -237,11 +216,10 @@ function export_csv(body) {
         useKeysAsHeaders: true,
         // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
     };
-    
+
     const csvExporter = new ExportToCsv(options);
 
     csvExporter.generateCsv(JSON.parse(body));
-    console.log(JSON.parse(body));
 }
 
 function delete_user(user) {
@@ -424,23 +402,40 @@ function resetButtonForExtraColumns() {
     });
 }
 
+function init_responsive_table() {
+    if (localStorage.getItem("livewire-datatable-cache") !== null) {
+        localStorage.removeItem("livewire-datatable-cache");
+        localStorage.removeItem("livewire-datatable-length");
+    }
+    cellVisibility();
+}
+
 window.addEventListener('resize', (e) => {
     cellVisibility();
 }, true);
 
 document.addEventListener("DOMContentLoaded", () => {
+    Livewire.hook('element.initialized', (el, component) => {
+        init_responsive_table();
+    });
     Livewire.hook('element.updated', (el, component) => {
         if (component.el.id !== 'myModal')
             cellVisibility();
-    })
+    });
+    Livewire.on('showPage', page => {
+        document.getElementById('card-header').innerHTML = 'Livewire Datatable - <b>Page:</b> ' + page;
+    });
+    Livewire.on('docMake', params => {
+        if (params['type'] === 'pdf') {
+            var widths = [
+                'auto', 'auto', 'auto', 'auto',
+                'auto', 'auto', 'auto', 'auto'
+            ];
+            export_pdf(widths, params['body']);
+        } else if (params['type'] === 'excel')
+            export_excel(params['body']);
+        else if (params['type'] === 'csv')
+            export_csv(params['body']);
+    });
 });
-
-if (localStorage.getItem("livewire-datatable-cache") !== null) {
-    localStorage.removeItem("livewire-datatable-cache");
-    localStorage.removeItem("livewire-datatable-length");
-    setTimeout(() => {
-        cellVisibility();
-    }, 500);
-} else
-    cellVisibility();
 </script>

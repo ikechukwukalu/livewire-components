@@ -33,9 +33,9 @@ Route::get('datatable', function () {
     ];
     
     /**
-     * ['column', 'asc|desc'] is effective if [sort] is set to columns
+     * ['column', 'true - asc|false - desc'] is effective if [sort] is set to columns
     */
-    $order_by = [$columns[0]['sort'], 'asc'];
+    $order_by = [$columns[0]['sort'], true];
     
     /**
      * Dropdown for options for number of rows that can be fetched
@@ -54,7 +54,7 @@ Route::get('datatable', function () {
      * latest | speed is very good, 
      * null | speed is the fastest
     */
-    $sort = 'latest';
+    $sort = 'columns';
     
     /**
      * Max allowed for numbered paginator | switch to simple paginator

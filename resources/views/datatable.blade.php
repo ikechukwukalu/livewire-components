@@ -9,6 +9,7 @@
                     @if(isset($_GET['page']))&nbsp;-&nbsp;<b>Page:</b>&nbsp;{{ $_GET['page'] }} @endif</div>
                 <div class="card-body">
                     @livewire('datatable', [
+                        'columns' => $columns,
                         'order_by' => $order_by,
                         'page_options' => $page_options,
                         'fetch' => isset($_GET['fetch']) ? $_GET['fetch'] : $fetch,

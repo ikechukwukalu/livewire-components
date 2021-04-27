@@ -70,6 +70,10 @@ table.livewire-datatable > thead .sorting::after {
 table.livewire-datatable > thead th {
     cursor: pointer !important;
 }
+.th_hover:hover {
+    color: #212529 !important;
+    background-color: rgba(0, 0, 0, 0.075) !important;
+}
 table.datatable-loading tbody,
 #modal-backdrop-loader {
     position: relative;

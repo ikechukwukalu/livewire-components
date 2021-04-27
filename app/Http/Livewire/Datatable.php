@@ -10,55 +10,28 @@ class Datatable extends Component
 {
     use WithPagination;
 
+    public $columns;
     public $page_options;
     public $fetch;
     public $order_by;
     public $search;
     public $sort;
     public $maxP;
+    public $total;
+    public $set;
+    public $current_page;
+    public $load_state = 'Initializing table...';
 
     protected $queryString = ['search', 'fetch'];
     protected $paginationTheme = 'bootstrap';
-    protected $listeners = ['deleteUser' => 'delete_user', 'reloadDatatable' => 'render'];
+    protected $listeners = ['deleteUser' => 'delete_user', 'reloadDatatable' => 'make_datatable'];
 
-    public function gotoPage($page)
-    {
-        $this->page = $page;
-        $this->emit('showPage', $this->page);
-    }
+    private $users = [];
 
-    public function previousPage()
-    {
-        $this->page > 1 ? $this->page -= 1 : 1;
-        $this->emit('showPage', $this->page);
-        return true;
-    }
 
-    public function nextPage()
-    {
-        $this->page += 1;
-        $this->emit('showPage', $this->page);
-        return true;
-    }
-
-    public function delete_user($id)
-    {
-        User::where('id', $id)->delete();
-        return true;
-    }
-
-    public function pdf_make() {
-        $this->export_data_from_table();
-    }
-
-    public function table_to_excel() {
-        $this->export_data_from_table('excel');
-    }
-
-    public function export_to_csv() {
-        $this->export_data_from_table('csv', true);
-    }
-
+    /**
+     * Private Functions
+    */
     private function export_data_from_table($type = 'pdf', $json = false) {
         $body = [];
         $total = User::count();
@@ -86,7 +59,8 @@ class Datatable extends Component
                     $user->country, $user->state, $user->city, $user->address
                 ];
         }
-
+        
+        $this->make_datatable();
         $this->emit('docMake', ['type' => $type, 'body' => $json ? json_encode($body) : $body]);
     }
 
@@ -103,7 +77,7 @@ class Datatable extends Component
     private function no_search_numbered_paginator()
     {
         if ($this->sort == "columns") {
-            return User::orderBy($this->order_by[0], $this->order_by[1])->paginate($this->fetch);
+            return User::orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->paginate($this->fetch);
         }
         elseif ($this->sort == "latest") {
             return User::orderBy('id', 'desc')->paginate($this->fetch);
@@ -127,7 +101,7 @@ class Datatable extends Component
                     ->orWhere('city', 'like', '%' . $q . '%')
                     ->orWhere('address', 'like', '%' . $q . '%');
             })
-                ->orderBy($this->order_by[0], $this->order_by[1])
+                ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
                 ->paginate($this->fetch);
         } elseif ($this->sort == "latest") {
             return User::where(function ($query) use ($q) {
@@ -170,7 +144,7 @@ class Datatable extends Component
     private function no_search_simple_paginator()
     {
         if ($this->sort == "columns") {
-            return User::orderBy($this->order_by[0], $this->order_by[1])->simplePaginate($this->fetch);
+            return User::orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($this->fetch);
         }
         // Not recommended for large records
         elseif ($this->sort == "latest") {
@@ -195,7 +169,7 @@ class Datatable extends Component
                     ->orWhere('city', 'like', '%' . $q . '%')
                     ->orWhere('address', 'like', '%' . $q . '%');
             })
-                ->orderBy($this->order_by[0], $this->order_by[1]) // Not recommended for large records
+                ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc') // Not recommended for large records
                 ->simplePaginate($this->fetch);
         } elseif ($this->sort == "latest") {
             return User::where(function ($query) use ($q) {
@@ -226,22 +200,77 @@ class Datatable extends Component
 
     }
 
+    /**
+     * Hooks
+    */
+    public function updatedFetch($value) {
+        $this->make_datatable();
+    }
+    public function updatedSearch($value) {
+        $this->make_datatable();
+    }
+
+    /**
+     * Public Functions
+    */
+    public function gotoPage($page)
+    {
+        $this->page = $page;
+        $this->make_datatable();
+        $this->emit('showPage', $this->page);
+    }
+
+    public function previousPage()
+    {
+        $this->page > 1 ? $this->page -= 1 : 1;
+        $this->make_datatable();
+        $this->emit('showPage', $this->page);
+    }
+
+    public function nextPage()
+    {
+        $this->page += 1;
+        $this->make_datatable();
+        $this->emit('showPage', $this->page);
+    }
+
+    public function resort($column) {
+        $this->order_by = [$column, !$this->order_by[1]];
+        $this->make_datatable();
+    }
+
+    public function delete_user($id)
+    {
+        User::where('id', $id)->delete();
+        return true;
+    }
+
+    public function pdf_make() {
+        $this->export_data_from_table();
+    }
+
+    public function table_to_excel() {
+        $this->export_data_from_table('excel');
+    }
+
+    public function export_to_csv() {
+        $this->export_data_from_table('csv', true);
+    }
+
+    public function make_datatable() {
+        $this->load_state = 'No matching records';
+        $this->total = User::count();
+        $this->users = $this->total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
+        $this->current_page = (($this->page * $this->fetch) - $this->fetch) + 1;
+        $remainder = $this->total % $this->fetch;
+        $pages = $remainder < 1 ? ($this->total - $remainder) / $this->fetch : (($this->total - $remainder) / $this->fetch) + 1;
+        $this->set = $this->page < $pages ? $this->page * $this->fetch : $this->total;
+    }
+
     public function render()
     {
-        $total = User::count();
-        $users = $total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
-        $page = (($this->page * $this->fetch) - $this->fetch) + 1;
-        $remainder = $total % $this->fetch;
-        $pages = $remainder < 1 ? ($total - $remainder) / $this->fetch : (($total - $remainder) / $this->fetch) + 1;
-        $set = $this->page < $pages ? $this->page * $this->fetch : $total;
-
         return view('livewire.datatable', [
-            'users' => $users,
-            'showing' => [
-                'page' => number_format($page),
-                'set' => number_format($set),
-                'total' => number_format($total),
-            ],
+            'users' => $this->users
         ]);
     }
 }
