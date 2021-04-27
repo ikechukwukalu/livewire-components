@@ -235,7 +235,7 @@ class Datatable extends Component
     }
 
     public function resort($column) {
-        $this->order_by = [$column, !$this->order_by[1]];
+        $this->order_by = [$column, $column != $this->order_by[0] ? true : !$this->order_by[1]];
         $this->make_datatable();
     }
 

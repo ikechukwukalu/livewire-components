@@ -50,7 +50,7 @@ Route::get('datatable', function () {
     /**
      * Sort Table
      * -----------
-     * columns | speed is good but not for large records, 
+     * columns | not recommended for large records exceeding 5k, 
      * latest | speed is very good, 
      * null | speed is the fastest
     */

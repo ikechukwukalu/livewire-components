@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         $faker = new UserFactory();
         $start = microtime(true);
 
-        foreach (range(1, 5000) as $i) {
+        foreach (range(1, 1000) as $i) {
             $list->insertAtFront($faker->definition());
         }
 
