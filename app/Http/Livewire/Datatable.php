@@ -21,8 +21,10 @@ class Datatable extends Component
     public $set;
     public $current_page;
     public $load_state = 'Initializing table...';
+    public $column = null;
+    public $order = null;
 
-    protected $queryString = ['search', 'fetch'];
+    protected $queryString = ['search', 'fetch', 'column', 'order'];
     protected $paginationTheme = 'bootstrap';
     protected $listeners = ['deleteUser' => 'delete_user', 'reloadDatatable' => 'make_datatable'];
 
@@ -259,6 +261,10 @@ class Datatable extends Component
 
     public function make_datatable() {
         $this->load_state = 'No matching records';
+        if(isset($this->order_by[0]))
+            $this->column = $this->order_by[0];
+        if(isset($this->order_by[1]))
+            $this->order = $this->order_by[1] ? 'asc' : 'desc';
         $this->total = User::count();
         $this->users = $this->total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
         $this->current_page = (($this->page * $this->fetch) - $this->fetch) + 1;

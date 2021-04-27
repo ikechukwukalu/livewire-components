@@ -10,7 +10,7 @@
                 <div class="card-body">
                     @livewire('datatable', [
                         'columns' => $columns,
-                        'order_by' => $order_by,
+                        'order_by' => isset($_GET['column']) && isset($_GET['order']) ? [$_GET['column'], $_GET['order'] == 'asc' ? true : false] : $order_by,
                         'page_options' => $page_options,
                         'fetch' => isset($_GET['fetch']) ? $_GET['fetch'] : $fetch,
                         'sort' => $sort,
