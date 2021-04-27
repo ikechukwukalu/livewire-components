@@ -22,7 +22,7 @@ Route::get('datatable', function () {
         'order_by' => ['name', 'asc'], // ['column', 'asc|desc'] is effective if [sort] is set to columns
         'page_options' => [5, 10, 15, 25, 50, 100],
         'pages_displayed' => 10, // default page_options
-        'sort' => 'latest', // OrderBy - [columns] | speed is okay, [latest] | speed is very good, [null] | speed is the fastest
+        'sort' => 'latest', // OrderBy - [columns] | speed is good but not for large records, [latest] | speed is very good, [null] | speed is the fastest
         'maxP' => 5000 // Max allowed for numbered paginator | switch to simple paginator
     ]);
 })->name('datatable');

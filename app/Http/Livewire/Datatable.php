@@ -50,9 +50,9 @@ class Datatable extends Component
     private function implement_numbered_paginator()
     {
         if (trim($this->search) == "") {
-            return $this->with_search_numbered_paginator();
-        } else {
             return $this->no_search_numbered_paginator();
+        } else {
+            return $this->with_search_numbered_paginator();
         }
 
     }
@@ -117,9 +117,9 @@ class Datatable extends Component
     private function implement_simple_paginator()
     {
         if (trim($this->search) == "") {
-            return $this->with_search_simple_paginator();
-        } else {
             return $this->no_search_simple_paginator();
+        } else {
+            return $this->with_search_simple_paginator();
         }
 
     }

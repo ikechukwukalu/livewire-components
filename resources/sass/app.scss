@@ -88,8 +88,10 @@ table.datatable-loading tbody:after,
     background-size: 50px 50px;
     content: "";
 }
-#livewire-datatable td {
-    min-width: 100px !important;
+.first-row {
+    width: 200px !important;
+}
+.other-rows {
     min-width: 150px !important;
 }
 #livewire-datatable {

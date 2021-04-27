@@ -1,4 +1,13 @@
 <div class="row">
+    <div class="col-md-6 pl-3 mb-2">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" onClick="export_pdf()">PDF</button>
+            <button type="button" class="btn btn-dark">EXCEL</button>
+            <button type="button" class="btn btn-dark">CSV</button>
+        </div>
+    </div>
+    <div class="col-md-6 pl-3 mb-2">
+    </div>
     <div class="col-md-6 pl-3">
         <div class="float-left form-inline">
             <label>Show</label>
@@ -22,16 +31,27 @@
                 wire:loading.class="datatable-loading">
                 <thead>
                     <tr id="livewire-datatable-th">
-                        <!-- Add `sorting_asc` or `sorting_desc` class to the `th` tag that is initially sorted -->
+                        @if($sort == 'columns')
                         <th class="sorting sorting_asc">NAME</th>
-                        <th class="sorting">EMAIL</th>
-                        <th class="sorting">PHONE</th>
-                        <th class="sorting">GENDER</th>
-                        <th class="sorting">COUNTRY</th>
-                        <th class="sorting">STATE</th>
-                        <th class="sorting">CITY</th>
-                        <th class="sorting">ADDRESS</th>
+                        <th>EMAIL</th>
+                        <th>PHONE</th>
+                        <th>GENDER</th>
+                        <th>COUNTRY</th>
+                        <th>STATE</th>
+                        <th>CITY</th>
+                        <th>ADDRESS</th>
                         <th>ACTION</th>
+                        @else
+                        <th>NAME</th>
+                        <th>EMAIL</th>
+                        <th>PHONE</th>
+                        <th>GENDER</th>
+                        <th>COUNTRY</th>
+                        <th>STATE</th>
+                        <th>CITY</th>
+                        <th>ADDRESS</th>
+                        <th>ACTION</th>
+                        @endif
                     </tr>
                 </thead>
                 <tfoot>
@@ -51,25 +71,38 @@
                     @forelse ($users as $user)
                     <tr id="livewire-datatable-tr-{{ $user->id }}">
                         <td>
-                            <div class="row-first">
+                            <div class="first-row">
                                 <button data-id="{{ $user->id }}" type="button"
                                     class="btn btn-primary btn-sm extra-columns"
                                     style="display: none">+</button>&nbsp;&nbsp;<span>{{ $user->name }}</span>
                             </div>
                         </td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->phone }}</td>
-                        <td>{{ $user->gender }}</td>
-                        <td>{{ $user->country }}</td>
-                        <td>{{ $user->state }}</td>
-                        <td>{{ $user->city }}</td>
-                        <td>{{ $user->address }}</td>
+                        <td>
+                            <div class="other-rows">{{ $user->email }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->phone }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->gender }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->country }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->state }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->city }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->address }}</div>
+                        </td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">
                                     Click Me
                                 </button>
-
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="javascript:void(0)"
                                         onClick="update_user({{ $user }})">Edit</a>
@@ -105,6 +138,38 @@
 Livewire.on('showPage', page => {
     document.getElementById('card-header').innerHTML = 'Livewire Datatable - <b>Page:</b> ' + page;
 });
+Livewire.on('pdfMake', page => {
+    export_pdf();
+});
+
+function export_pdf(widths, body) {
+    var docDefinition = {
+        content: [{
+            layout: 'lightHorizontalLines', // optional
+            table: {
+                // headers are automatically repeated if the table spans over multiple pages
+                // you can declare how many rows should be treated as headers
+                headerRows: 1,
+                widths: widths // ['*', 'auto', 100, '*'],
+
+                body: Array.isArray(body) ? body : []
+            }
+        }],
+        defaultStyle: {
+            font: 'Roboto'
+        }
+    };
+    pdfMake.fonts = {
+        Roboto: {
+            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        },
+    }
+
+    pdfMake.createPdf(docDefinition).open();
+}
 
 function delete_user(user) {
     var obj = JSON.parse(JSON.stringify(user));
