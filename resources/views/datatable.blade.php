@@ -11,7 +11,7 @@
                     @livewire('datatable', [
                         'order_by' => $order_by,
                         'page_options' => $page_options,
-                        'pages_displayed' => isset($_GET['pages_displayed']) ? $_GET['pages_displayed'] : $pages_displayed,
+                        'fetch' => isset($_GET['fetch']) ? $_GET['fetch'] : $fetch,
                         'sort' => $sort,
                         'maxP' => $maxP
                     ])

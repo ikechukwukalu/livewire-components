@@ -12,6 +12,8 @@ try {
 
     require('bootstrap');
     window.pdfMake = require("pdfMake");
+    window.TableToExcel = require('table-to-excel');
+    window.ExportToCsv = require('export-to-csv').ExportToCsv;
 } catch (e) { }
 
 /**

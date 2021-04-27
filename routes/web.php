@@ -18,12 +18,56 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('datatable', function () {
+    /**
+     * Table Header | Footer columns
+    */
+    $columns = [
+        ['name' => 'name', 'sort' => 'name'],
+        ['name' => 'email', 'sort' => 'email'],
+        ['name' => 'phone', 'sort' => 'phone'],
+        ['name' => 'gender', 'sort' => 'gender'],
+        ['name' => 'country', 'sort' => 'country'],
+        ['name' => 'state', 'sort' => 'state'],
+        ['name' => 'city', 'sort' => 'city'],
+        ['name' => 'address', 'sort' => 'address']
+    ];
+    
+    /**
+     * ['column', 'asc|desc'] is effective if [sort] is set to columns
+    */
+    $order_by = [$columns[0]['sort'], 'asc'];
+    
+    /**
+     * Dropdown for options for number of rows that can be fetched
+    */
+    $page_options = [5, 10, 15, 25, 50, 100];
+    
+    /**
+     * Default page_options
+    */
+    $fetch = $page_options[0];
+    
+    /**
+     * Sort Table
+     * -----------
+     * columns | speed is good but not for large records, 
+     * latest | speed is very good, 
+     * null | speed is the fastest
+    */
+    $sort = 'latest';
+    
+    /**
+     * Max allowed for numbered paginator | switch to simple paginator
+    */
+    $maxP = 5000;
+
     return view('datatable', [
-        'order_by' => ['name', 'asc'], // ['column', 'asc|desc'] is effective if [sort] is set to columns
-        'page_options' => [5, 10, 15, 25, 50, 100],
-        'pages_displayed' => 10, // default page_options
-        'sort' => 'latest', // OrderBy - [columns] | speed is good but not for large records, [latest] | speed is very good, [null] | speed is the fastest
-        'maxP' => 5000 // Max allowed for numbered paginator | switch to simple paginator
+        'columns' => $columns,
+        'order_by' => $order_by,
+        'page_options' => $page_options,
+        'fetch' => $fetch,
+        'sort' => $sort, 
+        'maxP' => $maxP
     ]);
 })->name('datatable');
 

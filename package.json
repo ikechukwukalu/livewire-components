@@ -23,6 +23,8 @@
         "sass-loader": "^8.0.0"
     },
     "dependencies": {
-        "pdfmake": "^0.1.71"
+        "export-to-csv": "^0.2.1",
+        "pdfmake": "^0.1.71",
+        "table-to-excel": "^1.0.6"
     }
 }

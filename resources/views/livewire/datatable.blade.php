@@ -1,9 +1,21 @@
 <div class="row">
     <div class="col-md-6 pl-3 mb-2">
         <div class="btn-group">
-            <button type="button" class="btn btn-dark" onClick="export_pdf()">PDF</button>
-            <button type="button" class="btn btn-dark">EXCEL</button>
-            <button type="button" class="btn btn-dark">CSV</button>
+            <button type="button" class="btn btn-dark" wire:click="pdf_make" wire:loading.attr="disabled">
+                <span wire:loading wire:target="pdf_make"><span
+                        class="spinner-border spinner-border-sm"></span>&nbsp;Loading...</span>
+                <span wire:loading.remove wire:target="pdf_make">PDF</span>
+            </button>
+            <button type="button" class="btn btn-dark" wire:click="table_to_excel" wire:loading.attr="disabled">
+                <span wire:loading wire:target="table_to_excel"><span
+                        class="spinner-border spinner-border-sm"></span>&nbsp;Loading...</span>
+                <span wire:loading.remove wire:target="table_to_excel">EXCEL</span>
+            </button>
+            <button type="button" class="btn btn-dark" wire:click="export_to_csv" wire:loading.attr="disabled">
+                <span wire:loading wire:target="export_to_csv"><span
+                        class="spinner-border spinner-border-sm"></span>&nbsp;Loading...</span>
+                <span wire:loading.remove wire:target="export_to_csv">CSV</span>
+            </button>
         </div>
     </div>
     <div class="col-md-6 pl-3 mb-2">
@@ -11,7 +23,7 @@
     <div class="col-md-6 pl-3">
         <div class="float-left form-inline">
             <label>Show</label>
-            <select class="form-control mr-1 ml-1" wire:model="pages_displayed">
+            <select class="form-control mr-1 ml-1" wire:model="fetch">
                 @foreach($page_options as $p)
                 <option>{{ $p }}</option>
                 @endforeach
@@ -28,7 +40,7 @@
     <div class="col-md-12 mt-3 mb-3">
         <div class="table-responsive">
             <table id="livewire-datatable" class="table table-hover livewire-datatable"
-                wire:loading.class="datatable-loading">
+                wire:target="init, previousPage, nextPage, gotoPage" wire:loading.class="datatable-loading">
                 <thead>
                     <tr id="livewire-datatable-th">
                         @if($sort == 'columns')
@@ -138,8 +150,17 @@
 Livewire.on('showPage', page => {
     document.getElementById('card-header').innerHTML = 'Livewire Datatable - <b>Page:</b> ' + page;
 });
-Livewire.on('pdfMake', page => {
-    export_pdf();
+Livewire.on('docMake', params => {
+    if (params['type'] === 'pdf') {
+        var widths = [
+            'auto', 'auto', 'auto', 'auto',
+            'auto', 'auto', 'auto', 'auto'
+        ];
+        export_pdf(widths, params['body']);
+    } else if (params['type'] === 'excel')
+        export_excel(params['body']);
+    else if (params['type'] === 'csv')
+        export_csv(params['body']);
 });
 
 function export_pdf(widths, body) {
@@ -150,7 +171,7 @@ function export_pdf(widths, body) {
                 // headers are automatically repeated if the table spans over multiple pages
                 // you can declare how many rows should be treated as headers
                 headerRows: 1,
-                widths: widths // ['*', 'auto', 100, '*'],
+                widths: widths, // ['*', 'auto', 100, '*'],
 
                 body: Array.isArray(body) ? body : []
             }
@@ -169,6 +190,58 @@ function export_pdf(widths, body) {
     }
 
     pdfMake.createPdf(docDefinition).open();
+}
+
+function export_excel(body) {
+    var tableToExcel = new TableToExcel();
+    tableToExcel.render(body, [{
+        text: "Livewire-datatable",
+        bg: "#333",
+        color: "#fff"
+    }]);
+}
+
+function export_csv(body) {
+    var data = [{
+            name: 'Test 1',
+            age: 13,
+            average: 8.2,
+            approved: true,
+            description: "using 'Content here, content here' "
+        },
+        {
+            name: 'Test 2',
+            age: 11,
+            average: 8.2,
+            approved: true,
+            description: "using 'Content here, content here' "
+        },
+        {
+            name: 'Test 4',
+            age: 10,
+            average: 8.2,
+            approved: true,
+            description: "using 'Content here, content here' "
+        },
+    ];
+
+    const options = { 
+        fieldSeparator: ',',
+        quoteStrings: '"',
+        decimalSeparator: '.',
+        showLabels: true, 
+        showTitle: true,
+        title: 'Livewire-datatable',
+        useTextFile: false,
+        useBom: true,
+        useKeysAsHeaders: true,
+        // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+    };
+    
+    const csvExporter = new ExportToCsv(options);
+
+    csvExporter.generateCsv(JSON.parse(body));
+    console.log(JSON.parse(body));
 }
 
 function delete_user(user) {
@@ -357,7 +430,6 @@ window.addEventListener('resize', (e) => {
 
 document.addEventListener("DOMContentLoaded", () => {
     Livewire.hook('element.updated', (el, component) => {
-        console.log(component.el.id);
         if (component.el.id !== 'myModal')
             cellVisibility();
     })
