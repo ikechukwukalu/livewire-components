@@ -1,8 +1,16 @@
 <div class="row justify-content-center">
     <div class="col-md-10">
+        <div class="w-100">
+            @if (session()->has('info'))
+            <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Notice!</strong> {{ session('info') }}
+            </div>
+            @endif
+        </div>
         <div class="form-group w-100">
             <label wire:loading wire:target="imap_email_body">Email body is loading...</label>
-            <label wire:loading wire:target="search_for_emails">Searching for more emails...</label>
+            <label wire:loading wire:target="search_for_emails, no_more_emails">Searching for more emails...</label>
             <label wire:loading.remove wire:target="imap_email_body, search_for_emails"
                 wire:click="imap_email_body">Search:</label>
             <div class="input-group w-100">
@@ -27,7 +35,7 @@
             </div>
             <div class="dropdown-search">
                 <div id="dropdown-backdrop" wire:loading.class="mail-list-loading custom-show"
-                    wire:target="search_for_emails, imap_email_body"></div>
+                    wire:target="search_for_emails, imap_email_body, no_more_emails"></div>
                 <div id="search-dropdown-menu" class="dropdown-search-menu shadow-sm w-100 px-3 pt-3"
                     style="display: {{ $display }}">
                     @forelse ($results as $result)
@@ -67,11 +75,16 @@ document.querySelector('.dropdown-search-menu').addEventListener("scroll", (e) =
     if ((parseFloat(element.scrollTop) + parseFloat(element.offsetHeight)) >= element.scrollHeight) {
         if (val == 2)
             Livewire.emit('searchEmailInfinityScroll', val);
+        else
+            Livewire.emit('NoMoreEmails');
     }
 });
 document.addEventListener("DOMContentLoaded", () => {
     Livewire.on("searchEmailInfinityScroll", (text) => {
         @this.search_for_emails(text);
+    });
+    Livewire.on("NoMoreEmails", () => {
+        @this.no_more_emails();
     });
 });
 </script>

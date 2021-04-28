@@ -11,6 +11,8 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+    require('livewire-sortable');
+    
     window.pdfMake = require("pdfMake");
     window.TableToExcel = require('table-to-excel');
     window.ExportToCsv = require('export-to-csv').ExportToCsv;

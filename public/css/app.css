@@ -10166,7 +10166,7 @@ ul.mail-list-loading:after {
   font-size: 1rem;
   color: #212529;
   list-style: none;
-  background-color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
   background-clip: padding-box;
   border-top: 1px solid fff;
   transform: scale(1);
@@ -10174,7 +10174,6 @@ ul.mail-list-loading:after {
   height: 175px !important;
   overflow-y: hidden !important;
   overflow-x: hidden !important;
-  opacity: 0.5 !important;
 }
 
 .custom-show {

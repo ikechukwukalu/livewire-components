@@ -15,6 +15,7 @@ class SearchEmail extends Component
     public $page = 0;
     public $scroll = 2;
     public $root;
+    public $search_length = 0;
 
     private $common_folders = [
         'root' => 'INBOX',
@@ -66,6 +67,13 @@ class SearchEmail extends Component
             $i--;
         }
 
+        $number_of_results = count($this->results);
+
+        if($this->search_length >= $number_of_results)
+            $this->no_more_emails();
+        
+        $this->search_length = $number_of_results;
+
         $client->disconnect();
     }
 
@@ -97,6 +105,10 @@ class SearchEmail extends Component
         $this->display = 'none';
         $this->results = [];
         $this->page = 0;
+    }
+
+    public function no_more_emails() {
+        session()->flash('info', 'No more emails to load');
     }
 
     public function render()
