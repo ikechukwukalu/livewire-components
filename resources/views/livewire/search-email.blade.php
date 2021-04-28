@@ -5,7 +5,7 @@
             <label wire:loading wire:target="search_for_emails">Searching for more emails...</label>
             <label wire:loading.remove wire:target="imap_email_body, search_for_emails"
                 wire:click="imap_email_body">Search:</label>
-            <div class="input-group mb-3 w-100">
+            <div class="input-group w-100">
                 <input type="text" name="search" class="form-control" id="search-email"
                     placeholder="Search email subject and body..." wire:model.defer="text" autocomplete="off" />
                 <input type="hidden" id="search-scroll" value="{{ $scroll }}">
@@ -30,25 +30,40 @@
                 </div>
             </div>
             <div class="dropdown-search">
+                <div id="dropdown-backdrop" wire:loading.class="mail-list-loading custom-show"
+                    wire:target="search_for_emails, imap_email_body"></div>
                 <div id="search-dropdown-menu" class="dropdown-search-menu shadow-sm w-100 px-3 pt-3"
                     style="display: {{ $display }}">
-                    @foreach ($results as $result)
-                    <a class="dropdown-item text-center pt-1" href="#"
-                        wire:click.prevent="imap_email_body('{{ $result['uid'] }}')">
-                        {{ $result['getSubject'] }}
+                    @forelse ($results as $result)
+                    @if($loop->first)
+                    <a class="dropdown-item text-center" style="display: none"></a>
+                    <a class="dropdown-item text-center pt-1"
+                        wire:click.prevent="imap_email_body('{{ trim($result['uid']) }}')">
+                        {{ trim($result['getSubject']) }}
                     </a>
-                    @endforeach
+                    @else
+                    <a class="dropdown-item text-center pt-1"
+                        wire:click.prevent="imap_email_body('{{ trim($result['uid']) }}')">
+                        {{ trim($result['getSubject']) }}
+                    </a>
+                    @endif
+                    @empty
+                    <a class="dropdown-item text-center pt-1" href="javascript:void(0)">
+                        No matching emails
+                    </a>
+                    <!-- 
+                            Uncommenting that ↑ causes the first element in the loop to become dormant. 
+                            It's a bug i'm still trying to fix. 
+                            So i've provided a dirty hack.
+                            By including this <a class="dropdown-item text-center" style="display: none"></a>
+                            above the first element, the problem is resolved.
+                        -->
+                    @endforelse
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- <a class="dropdown-item text-center">
-    <span class="text-danger">No result</span>
-</a>
-<a wire:loading wire:target="search_for_emails" class="dropdown-item text-center">
-    <span class="spinner-border spinner-border-sm"></span>
-</a> -->
 <script>
 document.querySelector('.dropdown-search-menu').addEventListener("scroll", (e) => {
     var val = document.getElementById('search-scroll').value;

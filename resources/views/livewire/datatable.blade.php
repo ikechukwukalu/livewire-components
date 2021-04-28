@@ -145,7 +145,7 @@
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
             @if(count($users) > 0)
-            {{ $users->onEachSide(1)->links() }}
+            {{ $users->onEachSide(2)->links() }}
             @endif
         </div>
     </div>

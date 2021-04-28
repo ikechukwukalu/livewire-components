@@ -20,7 +20,7 @@ class Datatable extends Component
     public $total;
     public $set;
     public $current_page;
-    public $load_state = 'Initializing table...';
+    public $load_state = 'Initializing datatable component...';
     public $column = null;
     public $order = null;
     public $white_list = [];

@@ -13,6 +13,7 @@ class GetMails extends Component
     public $webmails;
     public $email;
     public $root;
+    public $load_state = 'Initializing email component...';
 
     private $common_folders = [
         'root' => 'INBOX',
@@ -54,6 +55,8 @@ class GetMails extends Component
 
             $i--;
         }
+        if(count($this->webmails) < 1)
+            $this->load_state = 'No emails found';
 
         $client->disconnect();
     }

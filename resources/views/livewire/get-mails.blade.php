@@ -3,11 +3,9 @@
         <h3>Emails from:&nbsp;<span class="text-info" id="email-address">{{ $email }}</span></h3>
     </div>
     <div class="card-body">
-        <p wire:loading wire:target="imap_emails, gotoPage, previousPage, nextPage" style="width: 100%">
-            Loading emails, might take some few seconds...
-        </p>
         <livewire:search-email :results="[]" :email="$email" :root="$root" />
-        <ul class="list-group">
+        <ul class="list-group mail-list w-100 h-100" wire:loading.class="mail-list-loading"
+            wire:target="imap_emails, gotoPage, previousPage, nextPage">
             @forelse($webmails as $webmail)
             <li class="list-group-item html-list">
                 <span class="float-left">{{ $webmail['getSubject'] }}</span>
@@ -16,8 +14,8 @@
                 </span>
             </li>
             @empty
-            <li wire:loading.remove wire:target="imap_emails" class="html-list" style="list-style: none">
-                <p align="center" class="text-danger">{{ __('No emails found') }}</p>
+            <li class="html-list" style="list-style: none">
+                <p align="center" class="text-danger">{{ $load_state }}</p>
             </li>
             @endforelse
         </ul>

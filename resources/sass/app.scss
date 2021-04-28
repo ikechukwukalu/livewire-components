@@ -79,7 +79,9 @@ table.datatable-loading tbody,
     position: relative;
 }
 table.datatable-loading tbody:after,
-#modal-backdrop-loader:after {
+#dropdown-backdrop:after,
+#modal-backdrop-loader:after,
+ul.mail-list-loading:after {
     position: absolute;
     top: 0;
     left: 0;
@@ -104,9 +106,7 @@ table.datatable-loading tbody:after,
 .modal {
     overflow: auto !important;
 }
-
-
-@keyframes show_modal {
+@keyframes show_dropdown {
     from {
         transform: scale(0);
     }
@@ -114,12 +114,11 @@ table.datatable-loading tbody:after,
         transform: scale(1);
     }
 }
-
 .dropdown-search {
     max-width: 100%;
     position: relative;
+    max-height: 176px !important;
 }
-
 .dropdown-search-menu {
     position: absolute;
     z-index: 1000;
@@ -134,9 +133,33 @@ table.datatable-loading tbody:after,
     background-clip: padding-box;
     border-top: 1px solid rgba(0, 0, 0, 0.014);
     transform: scale(1);
-    animation: show_modal 0.15s;
+    animation: show_dropdown 0.15s;
     max-width: calc(100vw - 32px);
     max-height: 175px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+}
+#dropdown-backdrop {
+    position: absolute;
+    z-index: 1500;
+    display: none;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    list-style: none;
+    background-color: #212529;
+    background-clip: padding-box;
+    border-top: 1px solid fff;
+    transform: scale(1);
+    width: 100%;
+    height: 175px !important;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+    opacity: 0.5 !important;
+}
+
+.custom-show {
+    display: block !important;
 }
