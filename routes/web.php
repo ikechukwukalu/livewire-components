@@ -13,91 +13,93 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::middleware(['throttle:100,1'])->group(function () { //Rate limiting||Prevent bruteforce and DOS attacks||Allow only 25 request per minute
+    Route::get('/', function () {
+        return view('home');
+    })->name('home');
 
-Route::get('datatable', function () {
-    /**
-     * Table Header | Footer columns
-     */
-    $columns = [
-        ['name' => 'name', 'sort' => 'name'],
-        ['name' => 'email', 'sort' => 'email'],
-        ['name' => 'phone', 'sort' => 'phone'],
-        ['name' => 'gender', 'sort' => 'gender'],
-        ['name' => 'country', 'sort' => 'country'],
-        ['name' => 'state', 'sort' => 'state'],
-        ['name' => 'city', 'sort' => 'city'],
-        ['name' => 'address', 'sort' => 'address'],
-    ];
+    Route::get('datatable', function () {
+        /**
+         * Table Header | Footer columns
+         */
+        $columns = [
+            ['name' => 'name', 'sort' => 'name'],
+            ['name' => 'email', 'sort' => 'email'],
+            ['name' => 'phone', 'sort' => 'phone'],
+            ['name' => 'gender', 'sort' => 'gender'],
+            ['name' => 'country', 'sort' => 'country'],
+            ['name' => 'state', 'sort' => 'state'],
+            ['name' => 'city', 'sort' => 'city'],
+            ['name' => 'address', 'sort' => 'address'],
+        ];
 
-    /**
-     * ['column', 'true - asc|false - desc'] is effective if [sort] is set to columns
-     * To prevent SQL injection for this example I've whitelisted the necessary columns
-     * by including them into the $white_list array
-     */
-    $order_by = [$columns[0]['sort'], true];
+        /**
+         * ['column', 'true - asc|false - desc'] is effective if [sort] is set to columns
+         * To prevent SQL injection for this example I've whitelisted the necessary columns
+         * by including them into the $white_list array
+         */
+        $order_by = [$columns[0]['sort'], true];
 
-    /**
-     * Dropdown options for the number of rows that can be fetched
-     */
-    $page_options = [5, 10, 15, 25, 50, 100];
+        /**
+         * Dropdown options for the number of rows that can be fetched
+         */
+        $page_options = [5, 10, 15, 25, 50, 100];
 
-    /**
-     * Default page_options value
-     */
-    $fetch = $page_options[0];
+        /**
+         * Default page_options value
+         */
+        $fetch = $page_options[0];
 
-    /**
-     * Sort Table
-     * -----------
-     * columns | not recommended for large records exceeding 5k,
-     * latest | speed is very good,
-     * null | speed is the fastest
-     */
-    $sort = 'columns';
+        /**
+         * Sort Table
+         * -----------
+         * columns | not recommended for large records exceeding 5k,
+         * latest | speed is very good,
+         * null | speed is the fastest
+         */
+        $sort = 'columns';
 
-    /**
-     * Max allowed for numbered paginator | switch to simple paginator
-     */
-    $maxP = 5000;
+        /**
+         * Max allowed for numbered paginator | switch to simple paginator
+         */
+        $maxP = 5000;
 
-    return view('datatable', [
-        'columns' => $columns,
-        'order_by' => $order_by,
-        'page_options' => $page_options,
-        'fetch' => $fetch,
-        'sort' => $sort,
-        'maxP' => $maxP,
-    ]);
-})->name('datatable');
+        return view('datatable', [
+            'columns' => $columns,
+            'order_by' => $order_by,
+            'page_options' => $page_options,
+            'fetch' => $fetch,
+            'sort' => $sort,
+            'maxP' => $maxP,
+        ]);
+    })->name('datatable');
 
-Route::get('mail', function () {
-    /*
-     *
-     *
-     * private $common_folders = [
-     *      'root' => 'INBOX',
-     *      'junk' => 'INBOX.Spam',
-     *      'drafts' => 'INBOX.Drafts',
-     *      'sent' => 'INBOX.Sent',
-     *      'trash' => 'INBOX.Trash'
-     * ]
-     */
+    Route::get('mail', function () {
+        /*
+         *
+         *
+         * private $common_folders = [
+         *      'root' => 'INBOX',
+         *      'junk' => 'INBOX.Spam',
+         *      'drafts' => 'INBOX.Drafts',
+         *      'sent' => 'INBOX.Sent',
+         *      'trash' => 'INBOX.Trash'
+         * ]
+         */
 
-    return view('get-mails', [
-        'sender' => 'info@provirtcomm.com', 
-        'folder' => 'root'
-    ]);
-})->name('get-mails');
+        return view('get-mails', [
+            'sender' => 'info@provirtcomm.com',
+            'folder' => 'root',
+        ]);
+    })->name('get-mails');
 
-Route::prefix('sortable')->group(function () {
-    Route::get('basic', function () {
-        return view('sortable-basic');
-    })->name('sortable-basic');
+    Route::prefix('sortable')->group(function () {
+        Route::get('basic', function () {
+            return view('sortable-basic');
+        })->name('sortable-basic');
 
-    Route::get('complex', function () {
-        return view('sortable-complex');
-    })->name('sortable-complex');
+        Route::get('complex', function () {
+            return view('sortable-complex');
+        })->name('sortable-complex');
+    });
 });
