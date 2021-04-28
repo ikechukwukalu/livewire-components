@@ -13,7 +13,8 @@ A LARAVEL 8 APPLICATION UTILIZING LIVEWIRE
 •	``php artisan config:cache``\
 •	Take a look at your  ``route/web.php`` to set the appropriate params
 
-```Route::get('/', function () {
+```
+Route::get('/', function () {
     return view('home');
 })->name('home');
 
