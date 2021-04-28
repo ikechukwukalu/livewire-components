@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Livewire Components</title>
-    
+
     <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}" />
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @livewireStyles
@@ -16,7 +16,7 @@
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                <img style="width: 100px; height: auto" src="{{ asset('images/logo/logo.png') }}" /> 
+                <img style="width: 100px; height: auto" src="{{ asset('images/logo/logo.png') }}" />
                 <span class="live">Live</span><span class="wire">wire</span>
                 &nbsp;<span class="components">Components</span>
             </a>
@@ -33,7 +33,9 @@
 
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
-                    @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('datatable') }}">{{ __('Datatable') }}</a>
                     </li>
@@ -55,17 +57,15 @@
                             </a>
                         </div>
                     </li>
-                    @else
-                    @endguest
                 </ul>
             </div>
         </div>
     </nav>
-    
+
     <main class="py-4">
         @yield('content')
     </main>
-    
+
     @livewireScripts
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
