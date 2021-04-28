@@ -8,11 +8,11 @@ A LARAVEL 8 APPLICATION UTILIZING LIVEWIRE
 •	``copy .env.example .env``\
 •	``composer install``\
 •	``php artisan key:generate``\
-•	Set up your database in your ``.env``\
+•	Set up a database in your ``.env``\
 •	Run ``php artisan migrate:refresh --seed``\
 •	``php artisan config:cache``\
 •	Take a look at your  ``route/web.php`` to set the appropriate params\
-•	Within your ``.env``, make the suitable configurations for your ``imap`` to work
+•	Within your ``.env`` make the suitable configurations for your ``imap`` to work
 
 ```
 IMAP_HOST=mail.example.com
