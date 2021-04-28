@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         ini_set('memory_limit', '1024M');
+        $this->users();
+    }
+
+    private function users() {
         DB::disableQueryLog();
         $list = new LinkedList();
         $faker = new UserFactory();
