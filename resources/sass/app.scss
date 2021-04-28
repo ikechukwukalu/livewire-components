@@ -104,3 +104,39 @@ table.datatable-loading tbody:after,
 .modal {
     overflow: auto !important;
 }
+
+
+@keyframes show_modal {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.dropdown-search {
+    max-width: 100%;
+    position: relative;
+}
+
+.dropdown-search-menu {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border-top: 1px solid rgba(0, 0, 0, 0.014);
+    transform: scale(1);
+    animation: show_modal 0.15s;
+    max-width: calc(100vw - 32px);
+    max-height: 175px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}

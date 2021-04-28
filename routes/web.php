@@ -76,6 +76,22 @@ Route::get('datatable', function () {
     ]);
 })->name('datatable');
 
+/** 
+ * 
+ * 
+ * private $common_folders = [
+ *      'root' => 'INBOX',
+ *      'junk' => 'INBOX.Spam',
+ *      'drafts' => 'INBOX.Drafts',
+ *      'sent' => 'INBOX.Sent',
+ *      'trash' => 'INBOX.Trash'
+ * ]
+*/
+
+Route::get('mail', function() {
+    return view('get-mails', ['sender' => 'info@provirtcomm.com', 'folder' => 'root']);
+})->name('get-mails');
+
 Route::prefix('sortable')->group(function () {
     Route::get('basic', function () {
         return view('sortable-basic');
