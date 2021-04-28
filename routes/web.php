@@ -40,12 +40,12 @@ Route::get('datatable', function () {
     $order_by = [$columns[0]['sort'], true];
 
     /**
-     * Dropdown for options for number of rows that can be fetched
+     * Dropdown options for the number of rows that can be fetched
      */
     $page_options = [5, 10, 15, 25, 50, 100];
 
     /**
-     * Default page_options
+     * Default page_options value
      */
     $fetch = $page_options[0];
 
