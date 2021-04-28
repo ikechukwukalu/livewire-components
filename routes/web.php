@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Prevent bruteforce and DOS attacks||Allow only 25 request per minute
+Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Prevent bruteforce and DOS attacks||Allow only 50 request per minute
     Route::get('/', function () {
         return view('home');
     })->name('home');
