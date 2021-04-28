@@ -8,6 +8,7 @@
                 <div class="card-header">{{ __('Livewire Sortable - Basic') }}</div>
 
                 <div class="card-body">
+                    <h4 align="center">COMING SOON</h4>
                 </div>
             </div>
         </div>
