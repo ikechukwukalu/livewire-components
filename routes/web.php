@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +37,8 @@ Route::get('datatable', function () {
     
     /**
      * ['column', 'true - asc|false - desc'] is effective if [sort] is set to columns
+     * To prevent SQL injection for this example I've whitelisted the necessary columns
+     * by including them into the $fillable array
     */
     $order_by = [$columns[0]['sort'], true];
     

@@ -38,6 +38,14 @@
         </div>
     </div>
     <div class="col-md-12 mt-3 mb-3">
+        <div class="w-100">
+            @if (session()->has('fail'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Failed!</strong> {{ session('fail') }}
+            </div>
+            @endif
+        </div>
         <div class="table-responsive">
             <table wire:init="make_datatable" id="livewire-datatable" class="table table-hover livewire-datatable"
                 wire:target="make_datatable, fetch, previousPage, nextPage, gotoPage, search, resort"
@@ -45,21 +53,24 @@
                 <thead>
                     <tr id="livewire-datatable-th">
                         @if($sort == 'columns')
-                            @foreach ($columns as $column)
-                                @if ($order_by[0] == $column['sort'])
-                                    @if ($order_by[1])
-                                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">{{ strtoupper($column['name']) }}</th>
-                                    @else
-                                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">{{ strtoupper($column['name']) }}</th>
-                                    @endif
-                                @else
-                                    <th class="sorting th_hover"  wire:click="resort('{{ $column['sort'] }}')">{{ strtoupper($column['name']) }}</th>
-                                @endif
-                            @endforeach
+                        @foreach ($columns as $column)
+                        @if ($order_by[0] == $column['sort'])
+                        @if ($order_by[1])
+                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            {{ strtoupper($column['name']) }}</th>
                         @else
-                            @foreach ($columns as $column)
-                                <th>{{ strtoupper($column['name']) }}</th>
-                            @endforeach
+                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            {{ strtoupper($column['name']) }}</th>
+                        @endif
+                        @else
+                        <th class="sorting th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            {{ strtoupper($column['name']) }}</th>
+                        @endif
+                        @endforeach
+                        @else
+                        @foreach ($columns as $column)
+                        <th>{{ strtoupper($column['name']) }}</th>
+                        @endforeach
                         @endif
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -67,7 +78,7 @@
                 <tfoot>
                     <tr>
                         @foreach ($columns as $column)
-                            <th>{{ strtoupper($column['name']) }}</th>
+                        <th>{{ strtoupper($column['name']) }}</th>
                         @endforeach
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -134,11 +145,12 @@
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
             @if(count($users) > 0)
-                {{ $users->onEachSide(1)->links() }}
+            {{ $users->onEachSide(1)->links() }}
             @endif
         </div>
     </div>
 </div>
+
 @livewire('datatable-modal')
 
 <script>

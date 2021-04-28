@@ -124,21 +124,23 @@
 </div>
 
 <script>
-Livewire.on("editUser", (obj) => {
-    var modalBackDrop = document.createElement("div");
-    modalBackDrop.setAttribute('id', 'modal-backdrop');
-    modalBackDrop.setAttribute('class', 'modal-backdrop fade show');
+document.addEventListener("DOMContentLoaded", () => {
+    Livewire.on("editUser", (obj) => {
+        var modalBackDrop = document.createElement("div");
+        modalBackDrop.setAttribute('id', 'modal-backdrop');
+        modalBackDrop.setAttribute('class', 'modal-backdrop fade show');
 
-    var modalBackDropLoader = document.createElement("div");
-    modalBackDropLoader.setAttribute('id', 'modal-backdrop-loader');
-    modalBackDropLoader.setAttribute('class', 'w-100 h-100');
+        var modalBackDropLoader = document.createElement("div");
+        modalBackDropLoader.setAttribute('id', 'modal-backdrop-loader');
+        modalBackDropLoader.setAttribute('class', 'w-100 h-100');
 
-    modalBackDrop.appendChild(modalBackDropLoader);
+        modalBackDrop.appendChild(modalBackDropLoader);
 
-    @this.edit_user(obj);
-    document.querySelector('body').appendChild(modalBackDrop);
-});
-Livewire.on("closeModal", () => {
-    document.getElementById('modal-backdrop').remove();
+        @this.edit_user(obj);
+        document.querySelector('body').appendChild(modalBackDrop);
+    });
+    Livewire.on("closeModal", () => {
+        document.getElementById('modal-backdrop').remove();
+    });
 });
 </script>
