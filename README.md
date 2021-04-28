@@ -30,4 +30,4 @@ IMAP_PROTOCOL=imap
 •   Run ``php artisan serve``
 
 ## Live Version
-•   <a href="https://livewire-components.provirtcomm.com" target="_blank" rel="noopener noreferrer">Livewire Components</a>
+<a href="https://livewire-components.provirtcomm.com" target="_blank" rel="noopener noreferrer">Livewire Components</a>
