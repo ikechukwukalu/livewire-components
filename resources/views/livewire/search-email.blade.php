@@ -11,20 +11,16 @@
                 <input type="hidden" id="search-scroll" value="{{ $scroll }}">
                 <div class="input-group-append">
                     @if ($display == 'none')
-                    <button class="btn btn-primary" wire:loading wire:target="show_dropdown" type="button" disabled>
-                        <span class="spinner-border spinner-border-sm"></span>
-                    </button>
-                    <button class="btn btn-primary" wire:loading.remove wire:target="show_dropdown"
-                        wire:click="show_dropdown" wire:offline.attr="disabled" type="button">
-                        <span>Search</span>
+                    <button class="btn btn-primary" wire:loading.attr="disabled" wire:click="show_dropdown"
+                        wire:offline.attr="disabled" type="button">
+                        <span wire:loading wire:target="show_dropdown" class="spinner-border spinner-border-sm"></span>
+                        <span wire:loading.remove wire:target="show_dropdown">Search</span>
                     </button>
                     @else
-                    <button class="btn btn-danger" wire:loading wire:target="close_display" type="button" disabled>
-                        <span class="spinner-border spinner-border-sm"></span>
-                    </button>
-                    <button class="btn btn-danger" wire:loading.remove wire:target="close_display"
-                        wire:click="close_display" wire:offline.attr="disabled" type="button">
-                        <span>Reset</span>
+                    <button class="btn btn-danger" wire:loading.attr="disabled" wire:click="close_display"
+                        wire:offline.attr="disabled" type="button">
+                        <span wire:loading wire:target="close_display" class="spinner-border spinner-border-sm"></span>
+                        <span wire:loading.remove wire:target="close_display">Reset</span>
                     </button>
                     @endif
                 </div>
