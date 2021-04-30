@@ -29,7 +29,7 @@ class DatatableModal extends Component
             'input_data.*.state' => 'required|string|max:150',
             'input_data.*.city' => 'required|string|max:150',
             'input_data.*.address' => 'required|string|max:150'
-        ]
+        ];
      *  private function assign_properties() {
             $ary = [];
             foreach($this->inputs as $input) {
