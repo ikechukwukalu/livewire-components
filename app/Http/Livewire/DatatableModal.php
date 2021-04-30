@@ -68,7 +68,6 @@ class DatatableModal extends Component
             </div>
         @endforeach
     *************************
-    * You would need to manually type out the needed columns you wish to update
     */
 
     public $name;
