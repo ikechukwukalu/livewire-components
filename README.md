@@ -120,8 +120,3 @@ IMAP_PROTOCOL=imap
 •	Run ``npm install``, ``npm run watch`` for development\
 •   Run ``npm run prod`` for production\
 •   Run ``php artisan serve``
-
-## Live Version
-<a href="https://livewire-components.provirtcomm.com" target="_blank" rel="noopener noreferrer">Livewire Components</a>
-
-•   For the Live version, no email was configured for the Imap component. To run a sample clone this repo.
