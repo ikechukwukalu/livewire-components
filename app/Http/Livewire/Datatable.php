@@ -109,7 +109,7 @@ class Datatable extends Component
     }
     private function with_search_numbered_paginator()
     {
-        $q = $this->search;
+        $q = trim($this->search);
         if ($this->sort == "columns") {
             if(in_array($this->order_by[0], $this->white_list)) {
                 return User::where(function ($query) use ($q) {
@@ -179,7 +179,7 @@ class Datatable extends Component
     }
     private function with_search_simple_paginator()
     {
-        $q = $this->search;
+        $q = trim($this->search);
         if ($this->sort == "columns") {
             return User::where(function ($query) use ($q) {
                 $query->orWhere('name', 'like', '%' . $q . '%')
