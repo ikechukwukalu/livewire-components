@@ -18,9 +18,7 @@
             </button>
             @if (count($users) < 1 && strlen($search) > 0)
                 <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
-                    <span wire:loading wire:target="gotoPage('1')"><span
-                            class="spinner-border spinner-border-sm"></span>&nbsp;Loading...</span>
-                    <span wire:loading.remove wire:target="gotoPage('1')">Search From Page 1</span>
+                    <span>Search From Page 1</span>
                 </button>
             @endif
         </div>
