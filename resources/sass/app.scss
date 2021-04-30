@@ -162,3 +162,43 @@ ul.mail-list-loading:after {
 .custom-show {
     display: block !important;
 }
+
+@media screen and ( min-width: 640px ) and ( max-width: 700px ) {
+
+    li.page-item {
+        display: none ;
+    }
+
+    .page-item:first-child,
+    .page-item:nth-child( 2 ),
+    .page-item:nth-child( 3 ),
+    .page-item:nth-child( 4 ),
+    .page-item:nth-child( 5 ),
+    .page-item:nth-child( 6 ),
+    .page-item:nth-child( 7 ),
+    .page-item:nth-child( 8 ),
+    .page-item:nth-child( 9 ),
+    .page-item:nth-child( 10 ),
+    .page-item:nth-last-child( 2 ),
+    .page-item:last-child,
+    .page-item.active,
+    .page-item.disabled {
+        display: block;
+    }
+}
+
+@media screen and ( max-width: 639px ) {
+
+    li.page-item {
+        display: none ;
+    }
+
+    .page-item:first-child,
+    .page-item:nth-child( 2 ),
+    .page-item:nth-last-child( 2 ),
+    .page-item:last-child,
+    .page-item.active,
+    .page-item.disabled {
+        display: block;
+    }
+}

@@ -123,4 +123,5 @@ IMAP_PROTOCOL=imap
 
 ## Live Version
 <a href="https://livewire-components.provirtcomm.com" target="_blank" rel="noopener noreferrer">Livewire Components</a>
+
 •   For the Live version, no email was configured for the Imap component. To run a sample clone this repo.

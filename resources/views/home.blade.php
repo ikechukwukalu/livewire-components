@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card w-100 shadow-sm">
+            <div class="card w-100 shadow-sm mb-3">
             <a href="{{ route('datatable') }}">
                 <img class="card-img-top" src="{{ asset('images/components/livewire-datatable.png')}}"
                     alt="livewire datatable">
@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card w-100 shadow-sm">
+            <div class="card w-100 shadow-sm mb-3">
             <a href="{{ route('get-mails') }}">
                 <img class="card-img-top" src="{{ asset('images/components/livewire-getmail.png')}}"
                     alt="livewire imap emails">

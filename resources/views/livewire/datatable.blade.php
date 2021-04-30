@@ -23,7 +23,7 @@
     <div class="col-md-6 pl-3">
         <div class="float-left form-inline">
             <label>Show</label>
-            <select class="form-control mr-1 ml-1" wire:model="fetch">
+            <select class="form-control mr-1 ml-1 page-input" wire:model="fetch">
                 @foreach($page_options as $p)
                 <option>{{ $p }}</option>
                 @endforeach
@@ -34,7 +34,7 @@
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
             <label>Search:</label>
-            <input type="text" wire:model="search" class="form-control ml-1" placeholder="Search" />
+            <input type="text" wire:model="search" class="form-control ml-1 search-input" placeholder="Search" />
         </div>
     </div>
     <div class="col-md-12 mt-3 mb-3">
@@ -85,7 +85,7 @@
                 </tfoot>
                 <tbody>
                     @forelse ($users as $user)
-                    <tr id="livewire-datatable-tr-{{ $user->id }}">
+                    <tr id="livewire-datatable-tr-{{ $user->id }}" data-id="{{ $user->id }}">
                         <td>
                             <div class="first-row">
                                 <button data-id="{{ $user->id }}" type="button"
@@ -247,7 +247,6 @@ function update_user(user) {
 }
 
 function cellVisibility() {
-    resetButtonForExtraColumns();
     var tableContainer = document.getElementById('table-container');
     var livewireDatatable = document.getElementById("livewire-datatable");
     var _cells = Array.from(livewireDatatable.rows[0].cells);
@@ -316,11 +315,17 @@ function cellVisibility() {
     tableWidthCache(tableContainerLength, allIndx.join(','));
 
     if (hiddenIndx.length > 0) {
-        showButtonForExtraColumns();
         Array.from(livewireDatatable.querySelectorAll(hiddenIndx.join(', '))).map((ele) => {
             ele.style.display = 'none';
             ele.classList.add('cell-hidden');
         });
+        if (document.querySelector('tr.has-extra-row') === null)
+            showButtonForExtraColumns();
+        else
+            setTimeout(() => {
+                autoAdjustHiddenCells();
+            }, 500);
+        closeRowListeners();
     } else
         showButtonForExtraColumns('hide');
 
@@ -356,6 +361,7 @@ function displayHiddenCells(e) {
         btn.innerHTML = '-';
         btn.classList.remove('btn-primary');
         btn.classList.add('btn-danger');
+        tr.classList.add('has-extra-row')
 
         var row = livewireDatatable.insertRow(parseInt(tr.rowIndex) + parseInt(1));
         row.setAttribute('id', 'extra-row-' + id);
@@ -384,13 +390,73 @@ function displayHiddenCells(e) {
         btn.innerHTML = '+';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-primary');
+        tr.classList.remove('has-extra-row')
         document.getElementById('extra-row-' + id).remove();
     }
 }
 
+function autoAdjustHiddenCells() {
+    Array.from(document.querySelectorAll('tr.has-extra-row')).map((element, index) => {
+        var id = element.getAttribute('data-id');
+        var element = document.getElementById('livewire-datatable-tr-' + id);
+        var thead_rows = Array.from(document.getElementById('livewire-datatable-th').querySelectorAll(
+            'th.cell-hidden'));
+
+        var row = document.getElementById('extra-row-' + id);
+        var cell = row.querySelector('td:first-child');
+        cell.setAttribute('colspan', element.cells.length);
+        cell.innerHTML = "";
+
+        var ul = document.createElement("ul");
+        ul.classList.add("list-group");
+
+        Array.from(element.querySelectorAll('td.cell-hidden')).map((ele, inx) => {
+            var li = document.createElement("li");
+            li.classList.add("list-group-item");
+
+            var b = document.createElement("b");
+            b.innerHTML = thead_rows[inx].innerHTML;
+
+            li.appendChild(b);
+            li.innerHTML = li.innerHTML + ': ' + ele.innerHTML;
+
+            ul.appendChild(li);
+        });
+
+        cell.appendChild(ul);
+    });
+}
+
+function closeRowListeners() {
+    Array.from(document.querySelectorAll('.paginator-anchors')).map((ele) => {
+        ele.removeEventListener("click", closeAllExtraRows);
+        ele.addEventListener('click', closeAllExtraRows);
+    });
+    var search_input = document.querySelector('.search-input');
+    search_input.removeEventListener("keyup", closeAllExtraRows);
+    search_input.addEventListener('keyup', closeAllExtraRows);
+
+    var page_input = document.querySelector('.page-input');
+    page_input.removeEventListener("change", closeAllExtraRows);
+    page_input.addEventListener('change', closeAllExtraRows);
+}
+
+function closeAllExtraRows(e) {
+    Array.from(document.querySelectorAll('.extra-columns')).map((element, index) => {
+        var id = element.getAttribute('data-id');
+        var tr = document.getElementById('livewire-datatable-tr-' + id);
+
+        element.innerHTML = '+';
+        element.classList.remove('btn-danger');
+        element.classList.add('btn-primary');
+        tr.classList.remove('has-extra-row')
+        if(document.getElementById('extra-row-' + id) !== null)
+            document.getElementById('extra-row-' + id).remove();
+    });
+}
+
 function showButtonForExtraColumns(type = "show") {
-    var extraColumns = Array.from(document.querySelectorAll('.extra-columns'));
-    extraColumns.map((ele, inx) => {
+    Array.from(document.querySelectorAll('.extra-columns')).map((ele, inx) => {
         ele.removeEventListener("click", displayHiddenCells);
 
         if (type === 'show')
@@ -399,18 +465,6 @@ function showButtonForExtraColumns(type = "show") {
             ele.style.display = 'none';
 
         ele.addEventListener("click", displayHiddenCells);
-    });
-}
-
-function resetButtonForExtraColumns() {
-    var extraColumns = Array.from(document.querySelectorAll('.extra-columns'));
-    extraColumns.map((ele, inx) => {
-        ele.innerHTML = '+';
-        ele.classList.remove('btn-danger');
-        ele.classList.add('btn-primary');
-        var id = ele.getAttribute('data-id');
-        if (document.getElementById('extra-row-' + id) !== null)
-            document.getElementById('extra-row-' + id).remove();
     });
 }
 
@@ -449,5 +503,6 @@ document.addEventListener("DOMContentLoaded", () => {
         else if (params['type'] === 'csv')
             export_csv(params['body']);
     });
+    // closeRowListeners();
 });
 </script>
