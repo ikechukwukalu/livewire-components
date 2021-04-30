@@ -11,6 +11,7 @@ class DatatableModal extends Component
     public $user_id;
     public $display = false;
     public $inputs;
+    public $input_data;
     
     /***
      *  Livewire V2.4 doesn't support form validation and submission for nested properties
@@ -18,7 +19,6 @@ class DatatableModal extends Component
      *************************
      CLASS
      *************************
-     *  public $input_data;
      *  protected $rules = [
             'input_data' => 'required|array',
             'input_data.*.name' => 'required|string|max:150',
@@ -30,27 +30,6 @@ class DatatableModal extends Component
             'input_data.*.city' => 'required|string|max:150',
             'input_data.*.address' => 'required|string|max:150'
         ];
-     *  private function assign_properties() {
-            $ary = [];
-            foreach($this->inputs as $input) {
-                $ary[] = $input['sort'];
-            }
-            return $ary;
-        }
-    *   public function getInputDataProperty() {
-            return $this->assign_properties();
-        }
-    *   public function edit_user($user) {
-            $user = (object) $user;
-            $this->user_id = $user->id;
-            
-            foreach($this->inputs as $input) {
-                $this->input_data[$input['sort']] = $user->{$input['sort']};
-            }
-
-            $this->display = true;
-            return true;
-        }
      *************************
      BLADE
      *************************
@@ -137,6 +116,17 @@ class DatatableModal extends Component
         $this->validateOnly($propertyName);
     }
 
+    private function assign_properties() {
+        $ary = [];
+        foreach($this->inputs as $input) {
+            $ary[] = $input['sort'];
+        }
+        return $ary;
+    }
+
+    public function getInputDataProperty() {
+        return $this->assign_properties();
+    }
     public function close_modal() {
         $this->display = false;
         $this->emit('closeModal');
@@ -147,6 +137,7 @@ class DatatableModal extends Component
         
         foreach($this->inputs as $input) {
             $this->{$input['sort']} = $user->{$input['sort']};
+            $this->input_data[$input['sort']] = $user->{$input['sort']};
         }
 
         $this->display = true;
@@ -154,11 +145,18 @@ class DatatableModal extends Component
     }
     public function update_user() {
         $validatedData = $this->validate();
+        ksort($validatedData);
+        ksort($this->input_data);
         try {
-            User::where('id', $this->user_id)
-            ->update($validatedData);
-            $this->emit('reloadDatatable');
-            session()->flash('success', 'User has been updated');
+            if($validatedData !== $this->input_data) {
+                User::where('id', $this->user_id)
+                ->update($validatedData);
+                $this->input_data = $validatedData;
+                $this->emit('reloadDatatable');
+                session()->flash('success', 'User has been updated');
+            } else {
+                session()->flash('fail', 'No changes made');
+            }
         } catch (Exception $e) {
             session()->flash('fail', 'User could not be updated');
         }
