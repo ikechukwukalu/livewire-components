@@ -13,7 +13,7 @@ class DatatableModal extends Component
     public $inputs;
     
     /***
-     *  Livewire V2.4 doesn't support form validation and submission of nested properties
+     *  Livewire V2.4 doesn't support form validation and submission for nested properties
      *  The codes below might be useful if you wish to try
      *************************
      CLASS
