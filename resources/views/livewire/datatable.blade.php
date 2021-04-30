@@ -58,24 +58,27 @@
                 <thead>
                     <tr id="livewire-datatable-th">
                         @if($sort == 'columns')
-                        @foreach ($columns as $column)
-                        @if ($order_by[0] == $column['sort'])
-                        @if ($order_by[1])
-                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                            {{ strtoupper($column['name']) }}</th>
+                            @foreach ($columns as $column)
+                                @if ($order_by[0] == $column['sort'])
+                                    @if ($order_by[1])
+                                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            {{ strtoupper($column['name']) }}
+                                        </th>
+                                    @else
+                                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            {{ strtoupper($column['name']) }}
+                                        </th>
+                                    @endif
+                                @else
+                                    <th class="sorting th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                        {{ strtoupper($column['name']) }}
+                                    </th>
+                                @endif
+                            @endforeach
                         @else
-                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                            {{ strtoupper($column['name']) }}</th>
-                        @endif
-                        @else
-                        <th class="sorting th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                            {{ strtoupper($column['name']) }}</th>
-                        @endif
-                        @endforeach
-                        @else
-                        @foreach ($columns as $column)
-                        <th>{{ strtoupper($column['name']) }}</th>
-                        @endforeach
+                            @foreach ($columns as $column)
+                                <th>{{ strtoupper($column['name']) }}</th>
+                            @endforeach
                         @endif
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -156,7 +159,7 @@
     </div>
 </div>
 
-@livewire('datatable-modal')
+@livewire('datatable-modal' , ['inputs' => $columns])
 
 <script>
 function export_pdf(widths, body) {

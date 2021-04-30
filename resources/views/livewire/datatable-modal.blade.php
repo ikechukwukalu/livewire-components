@@ -26,82 +26,23 @@
                             </div>
                             @endif
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Name:</label>
-                                <input class="form-control @error('name') is-invalid @enderror" type="text"
-                                    wire:model="name" />
-                                @error('name') <span class="error">{{ $message }}</span> @enderror
+                        @foreach ($inputs as $input)
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ ucfirst($input['sort']) }}">{{ ucfirst($input['sort']) }}:</label>
+                                    <input class="form-control @error($input['sort']) is-invalid @enderror" type="text"
+                                        wire:model="{{ $input['sort'] }}" />
+                                    @error($input['sort']) <span class="error">{{ $message }}</span> @enderror
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input class="form-control @error('email') is-invalid @enderror" type="text"
-                                    wire:model="email" />
-                                @error('email') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Phone:</label>
-                                <input class="form-control @error('phone') is-invalid @enderror" type="tel"
-                                    wire:model="phone" />
-                                @error('phone') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Gender:</label>
-                                <select class="form-control @error('gender') is-invalid @enderror" type="text"
-                                    wire:model="gender">
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                </select>
-                                @error('gender') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">County:</label>
-                                <input class="form-control @error('country') is-invalid @enderror" type="text"
-                                    wire:model="country" />
-                                @error('country') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">State:</label>
-                                <input class="form-control @error('state') is-invalid @enderror" type="text"
-                                    wire:model="state" />
-                                @error('state') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">City:</label>
-                                <input class="form-control @error('city') is-invalid @enderror" type="text"
-                                    wire:model="city" />
-                                @error('city') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Address:</label>
-                                <textarea rows="3" class="form-control @error('address') is-invalid @enderror"
-                                    wire:model="address"></textarea>
-                                @error('address') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
+                        @endforeach
                         <div class="col-md-6 mx-auto">
                             <div class="form-group">
-                                <button wire:loading wire:target="update_user" type="button"
-                                    class="btn btn-primary btn-block" disabled>
-                                    <span class="spinner-border spinner-border-sm"></span>&nbsp;Loading...
-                                </button>
-                                <button wire:loading.remove wire:target="update_user" type="submit"
-                                    class="btn btn-primary btn-block">
-                                    Update
+                                <button type="submit" class="btn btn-primary btn-block" wire:target="update_user" wire.loading.attr="disabled">
+                                    <span wire:loading wire:target="update_user">
+                                        <span class="spinner-border spinner-border-sm"></span>&nbsp;Loading...
+                                    </span>
+                                    <span wire:loading.remove wire:target="update_user">Update</span>
                                 </button>
                             </div>
                         </div>
@@ -110,12 +51,11 @@
             </div>
 
             <div class="modal-footer">
-                <button wire:loading wire:target="clode_modal" type="button" class="btn btn-danger" disabled>
-                    <span class="spinner-border spinner-border-sm"></span>&nbsp;Removing...
-                </button>
-                <button wire:loading.remove wire:target="clode_modal" type="button" class="btn btn-danger"
-                    wire:click="clode_modal">
-                    Close
+                <button type="button" class="btn btn-danger" wire:click="close_modal" wire:target="close_modal" wire.loading.attr="disabled">
+                    <span wire:loading wire:target="close_modal">
+                        <span class="spinner-border spinner-border-sm"></span>&nbsp;Removing...
+                    </span>
+                    <span wire:loading.remove wire:target="close_modal">Close</span>
                 </button>
             </div>
 

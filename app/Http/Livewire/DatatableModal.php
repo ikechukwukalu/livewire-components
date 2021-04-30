@@ -10,6 +10,56 @@ class DatatableModal extends Component
     
     public $user_id;
     public $display = false;
+    public $inputs;
+    
+    /***
+     *  Livewire V2.4 doesn't support form validation and submission of nested properties
+     *  The codes below can be useful if you wish to try
+     *************************
+     CLASS
+     *************************
+     *  public $input_data;
+     *  private function assign_properties() {
+            $ary = [];
+            foreach($this->inputs as $input) {
+                $ary[] = $input['sort'];
+            }
+            return $ary;
+        }
+    *   public function getInputDataProperty() {
+            return $this->assign_properties();
+        }
+    *   public function edit_user($user) {
+            $user = (object) $user;
+            $this->user_id = $user->id;
+            
+            foreach($this->inputs as $input) {
+                $this->input_data[$input['sort']] = $user->{$input['sort']};
+            }
+
+            $this->display = true;
+            return true;
+        }
+     *************************
+     BLADE
+     *************************
+    *   <div class="modal-header bg-light">
+            <h4 class="modal-title">Edit User - {{ $input_data['name'] }}</h4>
+        </div>
+    *   @foreach ($inputs as $input)
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="{{ ucfirst($input['sort']) }}">{{ ucfirst($input['sort']) }}:</label>
+                    <input class="form-control @error($input['sort']) is-invalid @enderror" type="text"
+                        wire:model="input_data.{{ $input['sort'] }}" />
+                    @error($input['sort']) <span class="error">{{ $message }}</span> @enderror
+                </div>
+            </div>
+        @endforeach
+    *************************
+    * You would need to manually type out the needed columns you wish to update
+    */
+
     public $name;
     public $email;
     public $phone;
@@ -29,7 +79,6 @@ class DatatableModal extends Component
         'city' => 'required|string|max:150',
         'address' => 'required|string|max:150'
     ];
-
     protected $messages = [
         'name.required' => 'The :attribute cannot be empty.',
         'name.string' => 'The :attribute format is not valid.',
@@ -63,7 +112,6 @@ class DatatableModal extends Component
         'address.string' => 'The :attribute format is not valid.',
         'address.max' => 'The :attribute length cannot exceed 150.',
     ];
-
     protected $validationAttributes = [
         'name' => 'Fullname',
         'email' => 'Email Address',
@@ -75,34 +123,26 @@ class DatatableModal extends Component
         'address' => 'Address'
     ];
 
-    public function updated($propertyName)
-    {
+    public function updated($propertyName) {
         $this->validateOnly($propertyName);
     }
 
-    public function clode_modal() {
+    public function close_modal() {
         $this->display = false;
         $this->emit('closeModal');
     }
-
     public function edit_user($user) {
         $user = (object) $user;
         $this->user_id = $user->id;
-        $this->name = $user->name;
-        $this->email = $user->email;
-        $this->phone = $user->phone;
-        $this->gender = $user->gender;
-        $this->country = $user->country;
-        $this->state = $user->state;
-        $this->city = $user->city;
-        $this->address = $user->address;
+        
+        foreach($this->inputs as $input) {
+            $this->{$input['sort']} = $user->{$input['sort']};
+        }
 
         $this->display = true;
         return true;
     }
-
-    public function update_user()
-    {
+    public function update_user() {
         $validatedData = $this->validate();
         try {
             User::where('id', $this->user_id)
@@ -114,9 +154,7 @@ class DatatableModal extends Component
         }
         return true;
     }
-
-    public function render()
-    {
+    public function render() {
         return view('livewire.datatable-modal');
     }
 }
