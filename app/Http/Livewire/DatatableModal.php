@@ -14,11 +14,22 @@ class DatatableModal extends Component
     
     /***
      *  Livewire V2.4 doesn't support form validation and submission of nested properties
-     *  The codes below can be useful if you wish to try
+     *  The codes below might be useful if you wish to try
      *************************
      CLASS
      *************************
      *  public $input_data;
+     *  protected $rules = [
+            'input_data' => 'required|array',
+            'input_data.*.name' => 'required|string|max:150',
+            'input_data.*.email' => 'required|email|max:150',
+            'input_data.*.phone' => 'required|string|max:45',
+            'input_data.*.gender' => 'required|string|in:male,female',
+            'input_data.*.country' => 'required|string|max:150',
+            'input_data.*.state' => 'required|string|max:150',
+            'input_data.*.city' => 'required|string|max:150',
+            'input_data.*.address' => 'required|string|max:150'
+        ]
      *  private function assign_properties() {
             $ary = [];
             foreach($this->inputs as $input) {
