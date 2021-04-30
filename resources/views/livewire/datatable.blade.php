@@ -16,11 +16,11 @@
                         class="spinner-border spinner-border-sm"></span>&nbsp;Loading...</span>
                 <span wire:loading.remove wire:target="export_to_csv">CSV</span>
             </button>
-            @if (count($users) < 1 && strlen($search) > 0)
+            @if (count($users) < 1 && strlen($search)> 0)
                 <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
                     <span>Search From Page 1</span>
                 </button>
-            @endif
+                @endif
         </div>
     </div>
     <div class="col-md-6 pl-3 mb-2">
@@ -455,7 +455,7 @@ function closeAllExtraRows(e) {
         element.classList.remove('btn-danger');
         element.classList.add('btn-primary');
         tr.classList.remove('has-extra-row')
-        if(document.getElementById('extra-row-' + id) !== null)
+        if (document.getElementById('extra-row-' + id) !== null)
             document.getElementById('extra-row-' + id).remove();
     });
 }
