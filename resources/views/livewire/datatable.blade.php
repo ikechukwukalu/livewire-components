@@ -147,7 +147,7 @@
     </div>
     <div class="col-md-6 pl-3">
         <div class="float-left form-inline">
-            <label>Showing {{ $current_page }} to {{ $set }} of {{ $total }} entries</label>
+            <label>Showing {{ number_format($current_page) }} to {{ number_format($set) }} of {{ number_format($total) }} entries</label>
         </div>
     </div>
     <div class="col-md-6 pr-3">
