@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card" id="table-container">
                 <div class="card-header" id="card-header">{{ __('Livewire Datatable') }}
-                    @if(isset($_GET['page']))&nbsp;-&nbsp;<b>Page:</b>&nbsp;{{ $_GET['page'] }} @endif</div>
+                    @if(isset($_GET['page']))&nbsp;-&nbsp;<b>Page:</b>&nbsp;{{ number_format($_GET['page']) }} @endif</div>
                 <div class="card-body">
                     @livewire('datatable', [
                         'columns' => $columns,
@@ -14,7 +14,8 @@
                         'page_options' => $page_options,
                         'fetch' => isset($_GET['fetch']) ? $_GET['fetch'] : $fetch,
                         'sort' => $sort,
-                        'maxP' => $maxP
+                        'maxP' => $maxP,
+                        'last_page' => 1
                     ])
                 </div>
             </div>

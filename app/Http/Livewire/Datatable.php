@@ -20,6 +20,7 @@ class Datatable extends Component
     public $total;
     public $set;
     public $current_page;
+    public $last_page;
     public $load_state = 'Initializing datatable component...';
     public $column = null;
     public $order = null;
@@ -278,6 +279,7 @@ class Datatable extends Component
         $remainder = $this->total % $this->fetch;
         $pages = $remainder < 1 ? ($this->total - $remainder) / $this->fetch : (($this->total - $remainder) / $this->fetch) + 1;
         $this->set = $this->page < $pages ? $this->page * $this->fetch : $this->total;
+        $this->last_page = floor($this->total/$this->fetch);
     }
     public function render()
     {

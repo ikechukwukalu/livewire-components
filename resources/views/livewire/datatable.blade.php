@@ -16,14 +16,33 @@
                         class="spinner-border spinner-border-sm"></span>&nbsp;Loading...</span>
                 <span wire:loading.remove wire:target="export_to_csv">CSV</span>
             </button>
-            @if (count($users) < 1 && strlen($search)> 0)
-                <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
-                    <span>Search From Page 1</span>
-                </button>
-            @elseif ($total > $maxP && $page > 1)
-                <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
-                    <span>Search From Page 1</span>
-                </button>
+            @if ($total > $maxP)
+                @if (count($users) < 1 && strlen($search) > 0)
+                    <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                        <span>Search From Page 1</span>
+                    </button>
+                @elseif ($page > 1 && $page < $last_page)
+                    <button type="button" class="btn btn-danger" wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                        <span>First Page</span>
+                    </button>
+                    <button type="button" class="btn btn-danger" wire:click="gotoPage({{ $last_page }})" wire:loading.attr="disabled">
+                        <span>Last Page</span>
+                    </button>
+                @elseif ($page >= $last_page)
+                    <button type="button" class="btn btn-danger" wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                        <span>First Page</span>
+                    </button>
+                @else
+                    <button type="button" class="btn btn-danger" wire:click="gotoPage({{ $last_page }})" wire:loading.attr="disabled">
+                        <span>Last Page</span>
+                    </button>
+                @endif
+            @else
+                @if (count($users) < 1 && strlen($search) > 0)
+                    <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                        <span>Search From Page 1</span>
+                    </button>
+                @endif
             @endif
         </div>
     </div>
