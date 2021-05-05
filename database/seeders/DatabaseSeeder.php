@@ -21,6 +21,16 @@ class DatabaseSeeder extends Seeder
         ini_set('memory_limit', '1024M');
         $this->users();
     }
+    
+    private function random_digits($num = 4) {
+        $char = range(1, 9);
+        $rand_max = array_rand($char,$num);
+        $value  = $char[$rand_max[0]];
+        for($i = 1; $i < $num; $i ++) {
+            $value  .= $char[$rand_max[$i]];
+        }
+        return $value;
+    }
 
     private function user_definition($faker)
     {
@@ -32,14 +42,14 @@ class DatabaseSeeder extends Seeder
          * out the one below it.
          */
         // return [
-        //     'name' => Str::random(10),
-        //     'email' => Str::random(10).'@gmail.com',
-        //     'phone' => "080".BasicFunc::random_digits(8),
+        //     'name' => Str::random(5),
+        //     'email' => Str::random(5).'@example.com',
+        //     'phone' => "080". $this->random_digits(8),
         //     'gender' => $genders[$gender],
-        //     'country' => Str::random(10),
-        //     'state' => Str::random(10),
-        //     'city' => Str::random(10),
-        //     'address' => Str::random(150),
+        //     'country' => Str::random(5),
+        //     'state' => Str::random(5),
+        //     'city' => Str::random(5),
+        //     'address' => Str::random(10),
         // ];
         return [
             'name' => $faker->name($gender),
