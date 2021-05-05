@@ -23,14 +23,14 @@ class CreateUsersTable extends Migration
             $table->string('state');
             $table->string('city');
             $table->string('address');
-            $table->index('name');
-            $table->index('email'); 
-            $table->index('phone'); 
-            $table->index('gender'); 
-            $table->index('country'); 
-            $table->index('state'); 
-            $table->index('city'); 
-            $table->index('address');
+            // $table->index('name');
+            // $table->index('email'); 
+            // $table->index('phone'); 
+            // $table->index('gender'); 
+            // $table->index('country'); 
+            // $table->index('state'); 
+            // $table->index('city'); 
+            // $table->index('address');
             $table->timestamps();
         });
     }

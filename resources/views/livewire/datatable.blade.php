@@ -20,7 +20,7 @@
                 <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
                     <span>Search From Page 1</span>
                 </button>
-                @endif
+            @endif
         </div>
     </div>
     <div class="col-md-6 pl-3 mb-2">
@@ -39,7 +39,7 @@
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
             <label>Search:</label>
-            <input type="text" wire:model="search" class="form-control ml-1 search-input" placeholder="Search" />
+            <input type="text" wire:model.debounce.1000ms="search" class="form-control ml-1 search-input" placeholder="Search" />
         </div>
     </div>
     <div class="col-md-12 mt-3 mb-3">
@@ -93,53 +93,53 @@
                 </tfoot>
                 <tbody>
                     @forelse ($users as $user)
-                    <tr id="livewire-datatable-tr-{{ $user->id }}" data-id="{{ $user->id }}">
-                        <td>
-                            <div class="first-row">
-                                <button data-id="{{ $user->id }}" type="button"
-                                    class="btn btn-primary btn-sm extra-columns"
-                                    style="display: none">+</button>&nbsp;&nbsp;<span>{{ $user->name }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->email }}</div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->phone }}</div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->gender }}</div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->country }}</div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->state }}</div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->city }}</div>
-                        </td>
-                        <td>
-                            <div class="other-rows">{{ $user->address }}</div>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">
-                                    Click Me
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="javascript:void(0)"
-                                        onClick="update_user({{ $user }})">Edit</a>
-                                    <a class="dropdown-item text-danger" href="javascript:void(0)"
-                                        onClick="delete_user({{ $user }})">Delete</a>
+                        <tr id="livewire-datatable-tr-{{ $user->id }}" data-id="{{ $user->id }}">
+                            <td>
+                                <div class="first-row">
+                                    <button data-id="{{ $user->id }}" type="button"
+                                        class="btn btn-primary btn-sm extra-columns"
+                                        style="display: none">+</button>&nbsp;&nbsp;<span>{{ $user->name }}</span>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->email }}</div>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->phone }}</div>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->gender }}</div>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->country }}</div>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->state }}</div>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->city }}</div>
+                            </td>
+                            <td>
+                                <div class="other-rows">{{ $user->address }}</div>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">
+                                        Click Me
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="javascript:void(0)"
+                                            onClick="update_user({{ $user }})">Edit</a>
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)"
+                                            onClick="delete_user({{ $user }})">Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td align="center" colspan="9">{{ $load_state }}</td>
-                    </tr>
+                        <tr>
+                            <td align="center" colspan="9">{{ $load_state }}</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>

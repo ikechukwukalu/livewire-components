@@ -53,7 +53,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         /**
          * Sort Table
          * -----------
-         * columns | not recommended for large records exceeding 5k,
+         * columns | not recommended for large records exceeding 1k,
          * latest | speed is very good,
          * null | speed is the fastest
          */
@@ -62,7 +62,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         /**
          * Max allowed for numbered paginator | switch to simple paginator
          */
-        $maxP = 5000;
+        $maxP = 1000;
 
         return view('datatable', [
             'columns' => $columns,
