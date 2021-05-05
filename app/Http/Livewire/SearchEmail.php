@@ -25,7 +25,7 @@ class SearchEmail extends Component
         'trash' => 'INBOX.Trash',
     ];
 
-    public function show_dropdown()
+    public function show_dropdown() : void
     {
         if (strlen(trim($this->text)) > 0) {
             $this->display = 'block';
@@ -35,7 +35,7 @@ class SearchEmail extends Component
         }
     }
 
-    public function search_for_emails($text)
+    public function search_for_emails($text) : void
     {
         $this->page++;
         $this->scroll = 2;
@@ -77,7 +77,7 @@ class SearchEmail extends Component
         $client->disconnect();
     }
 
-    public function imap_email_body($uid)
+    public function imap_email_body($uid) : void
     {
         $client = Client::account('default');
         $client->connect();
@@ -101,13 +101,13 @@ class SearchEmail extends Component
         $this->emit('emailBody', $body);
     }
 
-    public function close_display() {
+    public function close_display() : void {
         $this->display = 'none';
         $this->results = [];
         $this->page = 0;
     }
 
-    public function no_more_emails() {
+    public function no_more_emails() : void {
         session()->flash('info', 'No more emails to load');
     }
 

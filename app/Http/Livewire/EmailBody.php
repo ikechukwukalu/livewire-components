@@ -19,7 +19,7 @@ class EmailBody extends Component
         'trash' => 'INBOX.Trash',
     ];
 
-    public function imap_email_body($uid)
+    public function imap_email_body($uid) : void
     {
         $client = Client::account('default');
         $client->connect();

@@ -53,7 +53,7 @@
         </div>
         <div class="table-responsive">
             <table wire:init="make_datatable" id="livewire-datatable" class="table table-hover livewire-datatable"
-                wire:target="make_datatable, fetch, previousPage, nextPage, gotoPage, search, resort"
+                wire:target="make_datatable, fetch, previousPage, nextPage, gotoPage, search, resort, delete_user"
                 wire:loading.class="datatable-loading">
                 <thead>
                     <tr id="livewire-datatable-th">
@@ -511,6 +511,8 @@ document.addEventListener("DOMContentLoaded", () => {
         else if (params['type'] === 'csv')
             export_csv(params['body']);
     });
-    // closeRowListeners();
+    Livewire.on('cellVisibility', params => {
+        cellVisibility();
+    });
 });
 </script>

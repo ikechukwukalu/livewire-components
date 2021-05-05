@@ -116,7 +116,7 @@ class DatatableModal extends Component
         $this->validateOnly($propertyName);
     }
 
-    private function assign_properties() {
+    private function assign_properties() : array {
         $ary = [];
         foreach($this->inputs as $input) {
             $ary[] = $input['sort'];
@@ -124,14 +124,14 @@ class DatatableModal extends Component
         return $ary;
     }
 
-    public function getInputDataProperty() {
+    public function getInputDataProperty() : array {
         return $this->assign_properties();
     }
-    public function close_modal() {
+    public function close_modal() : void {
         $this->display = false;
         $this->emit('closeModal');
     }
-    public function edit_user($user) {
+    public function edit_user($user) : void {
         $user = (object) $user;
         $this->user_id = $user->id;
         
@@ -141,9 +141,8 @@ class DatatableModal extends Component
         }
 
         $this->display = true;
-        return true;
     }
-    public function update_user() {
+    public function update_user() : void {
         $validatedData = $this->validate();
         ksort($validatedData);
         ksort($this->input_data);
@@ -160,7 +159,6 @@ class DatatableModal extends Component
         } catch (Exception $e) {
             session()->flash('fail', 'User could not be updated');
         }
-        return true;
     }
     public function render() {
         return view('livewire.datatable-modal');

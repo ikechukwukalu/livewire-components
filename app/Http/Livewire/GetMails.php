@@ -26,7 +26,7 @@ class GetMails extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public function imap_emails()
+    public function imap_emails() : void
     {
         $client = Client::account('default');
         $client->connect();
@@ -61,24 +61,22 @@ class GetMails extends Component
         $client->disconnect();
     }
 
-    public function gotoPage($page)
+    public function gotoPage($page) : void
     {
         $this->page = $page;
         $this->imap_emails();
     }
 
-    public function previousPage()
+    public function previousPage() : void
     {
         $this->page > 1 ? $this->page -= 1 : 1;
         $this->imap_emails();
-        return true;
     }
 
-    public function nextPage()
+    public function nextPage() : void
     {
         $this->page += 1;
         $this->imap_emails();
-        return true;
     }
 
     public function render()

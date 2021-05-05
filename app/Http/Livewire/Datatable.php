@@ -50,7 +50,7 @@ class Datatable extends Component
     /**
      * Private Functions
     */
-    private function export_data_from_table($type = 'pdf', $json = false) {
+    private function export_data_from_table($type = 'pdf', $json = false) : void {
         $body = [];
         $total = User::count();
         $users = $total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
@@ -81,7 +81,7 @@ class Datatable extends Component
         $this->make_datatable();
         $this->emit('docMake', ['type' => $type, 'body' => $json ? json_encode($body) : $body]);
     }
-    private function implement_numbered_paginator()
+    private function implement_numbered_paginator() : object
     {
         if (trim($this->search) == "") {
             return $this->no_search_numbered_paginator();
@@ -90,7 +90,7 @@ class Datatable extends Component
         }
 
     }
-    private function no_search_numbered_paginator()
+    private function no_search_numbered_paginator() : object
     {
         if ($this->sort == "columns") {
             if(in_array($this->order_by[0], $this->white_list)) {
@@ -107,7 +107,7 @@ class Datatable extends Component
             return User::paginate($this->fetch);
         }
     }
-    private function with_search_numbered_paginator()
+    private function with_search_numbered_paginator() : object
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
@@ -155,16 +155,15 @@ class Datatable extends Component
                 ->paginate($this->fetch);
         }
     }
-    private function implement_simple_paginator()
+    private function implement_simple_paginator() : object
     {
         if (trim($this->search) == "") {
             return $this->no_search_simple_paginator();
         } else {
             return $this->with_search_simple_paginator();
         }
-
     }
-    private function no_search_simple_paginator()
+    private function no_search_simple_paginator() : object
     {
         if ($this->sort == "columns") {
             return User::orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($this->fetch);
@@ -175,9 +174,8 @@ class Datatable extends Component
         } else {
             return User::simplePaginate($this->fetch);
         }
-
     }
-    private function with_search_simple_paginator()
+    private function with_search_simple_paginator() : object
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
@@ -219,49 +217,49 @@ class Datatable extends Component
             })
                 ->simplePaginate($this->fetch);
         }
-
     }
 
     /**
      * Public Functions
     */
-    public function gotoPage($page)
+    public function gotoPage($page) : void
     {
         $this->page = $page;
         $this->make_datatable();
         $this->emit('showPage', $this->page);
     }
-    public function previousPage()
+    public function previousPage() : void
     {
         $this->page > 1 ? $this->page -= 1 : 1;
         $this->make_datatable();
         $this->emit('showPage', $this->page);
     }
-    public function nextPage()
+    public function nextPage() : void
     {
         $this->page += 1;
         $this->make_datatable();
         $this->emit('showPage', $this->page);
     }
-    public function resort($column) {
+    public function resort($column) : void {
         $this->order_by = [$column, $column != $this->order_by[0] ? true : !$this->order_by[1]];
         $this->make_datatable();
     }
-    public function delete_user($id)
+    public function delete_user($id) : void
     {
         User::where('id', $id)->delete();
-        return true;
+        $this->make_datatable();
+        $this->emit('cellVisibility');
     }
-    public function pdf_make() {
+    public function pdf_make() : void {
         $this->export_data_from_table();
     }
-    public function table_to_excel() {
+    public function table_to_excel() : void {
         $this->export_data_from_table('excel');
     }
-    public function export_to_csv() {
+    public function export_to_csv() : void {
         $this->export_data_from_table('csv', true);
     }
-    public function make_datatable() {
+    public function make_datatable() : void {
         $this->load_state = 'No matching records';
         if(isset($this->order_by[0]))
             $this->column = $this->order_by[0];
