@@ -20,6 +20,10 @@
                 <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
                     <span>Search From Page 1</span>
                 </button>
+            @elseif ($total > $maxP && $page > 1)
+                <button type="button" class="btn btn-primary" wire:click="gotoPage('1')" wire:loading.attr="disabled">
+                    <span>Search From Page 1</span>
+                </button>
             @endif
         </div>
     </div>
