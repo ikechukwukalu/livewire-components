@@ -11,7 +11,7 @@
         <div class="form-group w-100">
             <label wire:loading wire:target="imap_email_body">Email body is loading...</label>
             <label wire:loading wire:target="search_for_emails, no_more_emails">Searching for more emails...</label>
-            <label wire:loading.remove wire:target="imap_email_body, search_for_emails"
+            <label wire:loading.remove wire:target="imap_email_body, search_for_emails, no_more_emails"
                 wire:click="imap_email_body">Search:</label>
             <div class="input-group w-100">
                 <input type="text" name="search" class="form-control" id="search-email"
