@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
         $start = microtime(true);
 
         $list = new LinkedList();
-        $list_chunks = new IterateEloquent(range(1, 50000));
+        $list_chunks = new IterateEloquent(range(1, 5000));
         foreach ($list_chunks as $list_chunk) {
             $list->insertAtFront($this->user_definition($faker));
         }

@@ -262,15 +262,19 @@ class Datatable extends Component
     }
     public function make_datatable() : void {
         $this->load_state = 'No matching records';
-        if(isset($this->order_by[0]))
-            $this->column = $this->order_by[0];
-        if(isset($this->order_by[1]))
-            $this->order = $this->order_by[1] ? 'asc' : 'desc';
-        
         $this->total = User::count();
 
-        if($this->total > $this->maxP)
-            $this->sort = 'latest';
+        if($this->total > $this->maxP){
+            $this->sort = $this->sort == 'columns' ? 'latest' : null;
+            $this->column = null;
+            $this->order = null;
+        } else {
+            if(isset($this->order_by[0]))
+                $this->column = $this->order_by[0];
+            if(isset($this->order_by[1]))
+                $this->order = $this->order_by[1] ? 'asc' : 'desc';
+        }
+
         if(!in_array($this->fetch, $this->page_options))
             $this->fetch = $this->page_options[0];
             
