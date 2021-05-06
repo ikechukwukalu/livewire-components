@@ -88,23 +88,23 @@
                             @foreach ($columns as $column)
                                 @if ($order_by[0] == $column['sort'])
                                     @if ($order_by[1])
-                                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            {{ strtoupper($column['name']) }}
+                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
                                         </th>
                                     @else
-                                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            {{ strtoupper($column['name']) }}
+                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
                                         </th>
                                     @endif
                                 @else
-                                    <th class="sorting th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                        {{ strtoupper($column['name']) }}
+                                    <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                        <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
                                     </th>
                                 @endif
                             @endforeach
                         @else
                             @foreach ($columns as $column)
-                                <th>{{ strtoupper($column['name']) }}</th>
+                                <th><div class="other-rows">{{ strtoupper($column['name']) }}</div></th>
                             @endforeach
                         @endif
                         <th>{{ __('Action') }}</th>
@@ -116,23 +116,23 @@
                             @foreach ($columns as $column)
                                 @if ($order_by[0] == $column['sort'])
                                     @if ($order_by[1])
-                                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            {{ strtoupper($column['name']) }}
+                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
                                         </th>
                                     @else
-                                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            {{ strtoupper($column['name']) }}
+                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
                                         </th>
                                     @endif
                                 @else
-                                    <th class="sorting th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                        {{ strtoupper($column['name']) }}
+                                    <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                        <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
                                     </th>
                                 @endif
                             @endforeach
                         @else
                             @foreach ($columns as $column)
-                                <th>{{ strtoupper($column['name']) }}</th>
+                                <th><div class="other-rows">{{ strtoupper($column['name']) }}</div></th>
                             @endforeach
                         @endif
                         <th>{{ __('Action') }}</th>
