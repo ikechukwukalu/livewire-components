@@ -62,7 +62,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         /**
          * Max allowed for numbered paginator | switch to simple paginator
          */
-        $maxP = 1000;
+        $maxP = 5000;
 
         return view('datatable', [
             'columns' => $columns,

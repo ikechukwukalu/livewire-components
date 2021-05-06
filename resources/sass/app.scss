@@ -51,23 +51,23 @@
         1px 1px 0 #444;
     font-size: 35px;
 }
-table.livewire-datatable > thead .sorting_asc::after {
+table.livewire-datatable > thead .sorting_asc::after, table.livewire-datatable > tfoot .sorting_asc::after {
     content: "↑" !important;
     color: #222 !important;
     padding-left: 5px !important;
 }
-table.livewire-datatable > thead .sorting_desc::after {
+table.livewire-datatable > thead .sorting_desc::after, table.livewire-datatable > tfoot .sorting_desc::after {
     content: "↓" !important;
     color: #222 !important;
     padding-left: 5px !important;
 }
-table.livewire-datatable > thead .sorting::after {
+table.livewire-datatable > thead .sorting::after, table.livewire-datatable > tfoot .sorting::after {
     left: 1.5em;
     content: "↑↓";
     padding-left: 1em;
     color: #dee2e6;
 }
-table.livewire-datatable > thead th {
+table.livewire-datatable > thead th, table.livewire-datatable > tfoot th {
     cursor: pointer !important;
 }
 .th_hover:hover {

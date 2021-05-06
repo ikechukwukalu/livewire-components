@@ -42,6 +42,10 @@
                     <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
                         <span>Search From Page 1</span>
                     </button>
+                @elseif (count($users) < 1 && $page > 1)
+                    <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                        <span>Jump To Page 1</span>
+                    </button>
                 @endif
             @endif
         </div>
@@ -108,9 +112,29 @@
                 </thead>
                 <tfoot>
                     <tr>
-                        @foreach ($columns as $column)
-                        <th>{{ strtoupper($column['name']) }}</th>
-                        @endforeach
+                        @if($sort == 'columns')
+                            @foreach ($columns as $column)
+                                @if ($order_by[0] == $column['sort'])
+                                    @if ($order_by[1])
+                                        <th class="sorting sorting_asc th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            {{ strtoupper($column['name']) }}
+                                        </th>
+                                    @else
+                                        <th class="sorting sorting_desc th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                            {{ strtoupper($column['name']) }}
+                                        </th>
+                                    @endif
+                                @else
+                                    <th class="sorting th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                                        {{ strtoupper($column['name']) }}
+                                    </th>
+                                @endif
+                            @endforeach
+                        @else
+                            @foreach ($columns as $column)
+                                <th>{{ strtoupper($column['name']) }}</th>
+                            @endforeach
+                        @endif
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </tfoot>
