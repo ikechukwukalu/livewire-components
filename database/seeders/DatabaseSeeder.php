@@ -68,8 +68,9 @@ class DatabaseSeeder extends Seeder
         $faker = \Faker\Factory::create();
         $start = microtime(true);
 
+        $rows = 5000;
         $list = new LinkedList();
-        $list_chunks = new IterateEloquent(range(1, 5000));
+        $list_chunks = new IterateEloquent(range(1, $rows));
         foreach ($list_chunks as $list_chunk) {
             $list->insertAtFront($this->user_definition($faker));
         }
@@ -89,6 +90,18 @@ class DatabaseSeeder extends Seeder
         }
 
         $time_elapsed_secs = microtime(true) - $start;
-        echo "Part 3: " . $time_elapsed_secs . ", Data inserted: " . number_format(count($data)). " \n";
+        echo "Part 3: " . $time_elapsed_secs . ", Data inserted: " . number_format(count($data)) . " \n";
+
+        //Over time COUNT clause could become expensive when using innoDB so this is my solution.
+        $total = DB::table('users')->count();
+        $user_rows = DB::table('user_rows')->first();
+        if(isset($user_rows->id)) {
+            DB::table('user_rows')->update(['number' => $total]);
+        } else {
+            DB::table('user_rows')->insert(['number' => $total]);
+        }
+
+        $time_elapsed_secs = microtime(true) - $start;
+        echo "Part 4: " . $time_elapsed_secs . ", Number of user rows: " . number_format($total) . " \n";
     }
 }

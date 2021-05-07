@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use App\Models\userRow;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -53,7 +54,7 @@ class Datatable extends Component
     */
     private function export_data_from_table($type = 'pdf', $json = false) : void {
         $body = [];
-        $total = User::count();
+        $total = $this->get_user_rows();
         $users = $total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
 
         if($json)
@@ -219,6 +220,10 @@ class Datatable extends Component
                 ->simplePaginate($this->fetch);
         }
     }
+    private function get_user_rows() : int {
+        $user_rows = userRow::first();
+        return isset($user_rows->number) && is_int($user_rows->number) ? $user_rows->number : 0;
+    }
 
     /**
      * Public Functions
@@ -262,7 +267,7 @@ class Datatable extends Component
     }
     public function make_datatable() : void {
         $this->load_state = 'No matching records';
-        $this->total = User::count();
+        $this->total = $this->get_user_rows();
 
         if($this->total > $this->maxP){
             $this->sort = $this->sort == 'columns' ? 'latest' : null;
