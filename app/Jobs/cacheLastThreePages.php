@@ -12,9 +12,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-use App\Service\LinkedList;
-use App\Service\IterateEloquent;
-
 class cacheLastThreePages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -75,16 +72,6 @@ class cacheLastThreePages implements ShouldQueue
         ini_set('max_execution_time', '300');
         $this->loop_last_three_pages();
     }
-
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array
-     */
-    public function middleware()
-    {
-        return [(new ThrottlesExceptions(1, 2))->by($this->cache)];
-    }
     
     private function loop_last_three_pages() {
         DB::disableQueryLog();
@@ -100,7 +87,7 @@ class cacheLastThreePages implements ShouldQueue
                 $time_elapsed_secs = microtime(true) - $start;
                 echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
 
-                $users = $this->implement_simple_paginator();
+                $this->implement_simple_paginator();
 
                 $time_elapsed_secs = microtime(true) - $start;
                 echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_simple_paginator" . " \n";
@@ -114,7 +101,7 @@ class cacheLastThreePages implements ShouldQueue
                 $time_elapsed_secs = microtime(true) - $start;
                 echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
 
-                $users = $this->implement_numbered_paginator();
+                $this->implement_numbered_paginator();
 
                 $time_elapsed_secs = microtime(true) - $start;
                 echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_numbered_paginator" . " \n";

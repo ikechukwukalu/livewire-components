@@ -12,9 +12,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-use App\Service\LinkedList;
-use App\Service\IterateEloquent;
-
 class cacheLastPage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -72,7 +69,9 @@ class cacheLastPage implements ShouldQueue
      */
     public function handle()
     {
-        ini_set('max_execution_time', '120');
+        DB::disableQueryLog();
+        $start = microtime(true);
+
         $this->params[6] = $this->last_page;
         $this->page = $this->last_page;
         $this->cache = implode('.', $this->params);
@@ -80,20 +79,14 @@ class cacheLastPage implements ShouldQueue
         $time_elapsed_secs = microtime(true) - $start;
         echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
 
-        $users = $this->implement_simple_paginator();
+        if ($this->simplePaginate)
+            $this->implement_simple_paginator();
+        else
+            $this->implement_numbered_paginator();
+
 
         $time_elapsed_secs = microtime(true) - $start;
         echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_simple_paginator" . " \n";
-    }
-
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array
-     */
-    public function middleware()
-    {
-        return [(new ThrottlesExceptions(1, 2))->by($this->cache)];
     }
     
     private function query_users_table()

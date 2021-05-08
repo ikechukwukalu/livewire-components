@@ -40,6 +40,10 @@ class Datatable extends Component
     private $users = [];
     private $cache;
 
+    public function __construct() {
+        ini_set('max_execution_time', '120');
+    }
+
     /**
      * Hooks
      */
@@ -326,9 +330,11 @@ class Datatable extends Component
         
         /***
          * Cache::flush() - clear cache
-         * Switch `cacheLastThreePages` for `cacheLastPage to cache last 3 pages instead
+         * Switch `cacheLastPage` for `cacheLastThreePages to cache the last 3 pages instead
         */
-        cacheLastPage::dispatch($this->cache, $this->last_page, ($this->total > $this->maxP));
+        
+        $cache = 'users.' . $this->fetch . '.' . $this->search . '.' . $this->column . '.' . $this->order . '.' . $this->sort . '.' . $this->last_page;
+        cacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP));
 
         $this->emit('cellVisibility');
     }

@@ -12,9 +12,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-use App\Service\LinkedList;
-use App\Service\IterateEloquent;
-
 class cacheTwoPagesOnEachSide implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -74,16 +71,6 @@ class cacheTwoPagesOnEachSide implements ShouldQueue
     {
         ini_set('max_execution_time', '300');
         $this->loop_last_three_pages();
-    }
-
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array
-     */
-    public function middleware()
-    {
-        return [(new ThrottlesExceptions(1, 2))->by($this->cache)];
     }
     
     private function loop_last_three_pages() {
