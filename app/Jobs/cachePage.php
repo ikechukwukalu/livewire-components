@@ -133,9 +133,13 @@ class cachePage implements ShouldQueue, UserDatatableQueryPagination
                 return [];
             }
         } elseif ($this->sort == "latest") {
-            return $this->fetch_users_table()->orderBy('id', 'desc')->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
+            return Cache::remember($this->cache, 300, function () {
+                return $this->fetch_users_table()->orderBy('id', 'desc')->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
+            });
         } else {
-            return $this->fetch_users_table()->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
+            return Cache::remember($this->cache, 300, function () {
+                return $this->fetch_users_table()->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
+            });
         }
     }
     public function with_search_numbered_paginator(): object

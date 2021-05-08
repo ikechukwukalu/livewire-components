@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UserRow extends Migration
+class CreateUserRowsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,6 @@ class UserRow extends Migration
      */
     public function up()
     {
-        //
         Schema::create('user_rows', function (Blueprint $table) {
             $table->id();
             $table->integer('number');
@@ -28,6 +27,6 @@ class UserRow extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('user_rows');
     }
 }

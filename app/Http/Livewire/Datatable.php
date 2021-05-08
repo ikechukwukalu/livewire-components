@@ -135,9 +135,13 @@ class Datatable extends Component
                 return [];
             }
         } elseif ($this->sort == "latest") {
-            return $this->fetch_users_table()->orderBy('id', 'desc')->paginate($this->fetch);
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->orderBy('id', 'desc')->paginate($this->fetch);
+            });
         } else {
-            return $this->fetch_users_table()->paginate($this->fetch);
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->paginate($this->fetch);
+            });
         }
     }
     private function with_search_numbered_paginator(): object
@@ -262,7 +266,8 @@ class Datatable extends Component
             $cache[6] = $i;
             $cache = implode('.', $cache);
 
-            cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+            if(Cache::has($cache) == false)
+                cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
         }
         for ($i = $this->page; $i <= ($current_page + 2); $i ++) {
                 
@@ -270,7 +275,8 @@ class Datatable extends Component
             $cache[6] = $i;
             $cache = implode('.', $cache);
 
-            cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+            if(Cache::has($cache) == false)
+                cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
         }
     }
 
@@ -359,6 +365,7 @@ class Datatable extends Component
         $cache[6] = $this->last_page;
         $cache = implode('.', $cache);
 
+        // Cache::flush();
         cacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP));
         $this->cache_page();
 
