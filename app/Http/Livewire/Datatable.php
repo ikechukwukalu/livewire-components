@@ -12,18 +12,18 @@ class Datatable extends Component
 
     public $columns;
     public $page_options;
-    public $fetch;
     public $order_by;
-    public $search;
-    public $sort;
+    public $search = null;
+    public $fetch = 5;
+    public $column = null;
+    public $order = null;
+    public $sort = null;
     public $maxP;
     public $total;
     public $set;
     public $current_page;
     public $last_page;
     public $load_state = 'Initializing datatable component...';
-    public $column = null;
-    public $order = null;
     public $white_list = [];
 
     protected $queryString = ['search', 'fetch', 'column', 'order', 'sort'];
