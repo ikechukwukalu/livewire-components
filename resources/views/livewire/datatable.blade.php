@@ -544,10 +544,6 @@ function init_responsive_table() {
     cellVisibility();
 }
 
-window.addEventListener('resize', (e) => {
-    cellVisibility();
-}, true);
-
 document.addEventListener("DOMContentLoaded", () => {
     Livewire.on('showPage', page => {
         document.getElementById('card-header').innerHTML = 'Livewire Datatable - <b>Page:</b> ' + page;
@@ -571,5 +567,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('popstate', function(event) {
         cellVisibility();
     }, false);
+    window.addEventListener('resize', (e) => {
+        cellVisibility();
+    }, true);
 });
 </script>
