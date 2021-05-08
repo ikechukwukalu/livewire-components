@@ -2,8 +2,11 @@
 
 namespace App\Http\Livewire;
 
+use Illuminate\Support\Facades\DB;
+
 use App\Models\User;
 use App\Models\userRow;
+
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -52,6 +55,12 @@ class Datatable extends Component
     /**
      * Private Functions
     */
+    private function query_users_table() {
+        return DB::table('users');
+    }
+    private function fetch_users_table() {
+        return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
+    }
     private function export_data_from_table($type = 'pdf', $json = false) : void {
         $body = [];
         $total = $this->get_user_rows();
@@ -96,17 +105,17 @@ class Datatable extends Component
     {
         if ($this->sort == "columns") {
             if(in_array($this->order_by[0], $this->white_list)) {
-                return User::orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->paginate($this->fetch);
+                return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->paginate($this->fetch);
             } else {
                 session()->flash('fail', 'Invalid column value!');
                 return [];
             }
         }
         elseif ($this->sort == "latest") {
-            return User::orderBy('id', 'desc')->paginate($this->fetch);
+            return $this->fetch_users_table()->orderBy('id', 'desc')->paginate($this->fetch);
         }
         else {
-            return User::paginate($this->fetch);
+            return $this->fetch_users_table()->paginate($this->fetch);
         }
     }
     private function with_search_numbered_paginator() : object
@@ -114,7 +123,7 @@ class Datatable extends Component
         $q = trim($this->search);
         if ($this->sort == "columns") {
             if(in_array($this->order_by[0], $this->white_list)) {
-                return User::where(function ($query) use ($q) {
+                return $this->fetch_users_table()->where(function ($query) use ($q) {
                     $query->orWhere('name', 'like', '%' . $q . '%')
                         ->orWhere('email', 'like', '%' . $q . '%')
                         ->orWhere('phone', 'like', '%' . $q . '%')
@@ -131,7 +140,7 @@ class Datatable extends Component
                 return [];
             }
         } elseif ($this->sort == "latest") {
-            return User::where(function ($query) use ($q) {
+            return $this->fetch_users_table()->where(function ($query) use ($q) {
                 $query->orWhere('name', 'like', '%' . $q . '%')
                     ->orWhere('email', 'like', '%' . $q . '%')
                     ->orWhere('phone', 'like', '%' . $q . '%')
@@ -144,7 +153,7 @@ class Datatable extends Component
                 ->orderBy('id', 'desc')
                 ->paginate($this->fetch);
         } else {
-            return User::where(function ($query) use ($q) {
+            return $this->fetch_users_table()->where(function ($query) use ($q) {
                 $query->orWhere('name', 'like', '%' . $q . '%')
                     ->orWhere('email', 'like', '%' . $q . '%')
                     ->orWhere('phone', 'like', '%' . $q . '%')
@@ -168,20 +177,19 @@ class Datatable extends Component
     private function no_search_simple_paginator() : object
     {
         if ($this->sort == "columns") {
-            return User::orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($this->fetch);
+            return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($this->fetch);
         }
-        // Not recommended for large records
         elseif ($this->sort == "latest") {
-            return User::orderBy('id', 'desc')->simplePaginate($this->fetch);
+            return $this->fetch_users_table()->orderBy('id', 'desc')->simplePaginate($this->fetch);
         } else {
-            return User::simplePaginate($this->fetch);
+            return $this->fetch_users_table()->simplePaginate($this->fetch);
         }
     }
     private function with_search_simple_paginator() : object
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
-            return User::where(function ($query) use ($q) {
+            return $this->fetch_users_table()->where(function ($query) use ($q) {
                 $query->orWhere('name', 'like', '%' . $q . '%')
                     ->orWhere('email', 'like', '%' . $q . '%')
                     ->orWhere('phone', 'like', '%' . $q . '%')
@@ -191,10 +199,10 @@ class Datatable extends Component
                     ->orWhere('city', 'like', '%' . $q . '%')
                     ->orWhere('address', 'like', '%' . $q . '%');
             })
-                ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc') // Not recommended for large records
+                ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
                 ->simplePaginate($this->fetch);
         } elseif ($this->sort == "latest") {
-            return User::where(function ($query) use ($q) {
+            return $this->fetch_users_table()->where(function ($query) use ($q) {
                 $query->orWhere('name', 'like', '%' . $q . '%')
                     ->orWhere('email', 'like', '%' . $q . '%')
                     ->orWhere('phone', 'like', '%' . $q . '%')
@@ -207,7 +215,7 @@ class Datatable extends Component
                 ->orderBy('id', 'desc')
                 ->simplePaginate($this->fetch);
         } else {
-            return User::where(function ($query) use ($q) {
+            return $this->fetch_users_table()->where(function ($query) use ($q) {
                 $query->orWhere('name', 'like', '%' . $q . '%')
                     ->orWhere('email', 'like', '%' . $q . '%')
                     ->orWhere('phone', 'like', '%' . $q . '%')
@@ -221,7 +229,7 @@ class Datatable extends Component
         }
     }
     private function get_user_rows() : int {
-        $user_rows = userRow::first();
+        $user_rows = DB::table('user_rows')->first();
         return isset($user_rows->number) && is_int($user_rows->number) ? $user_rows->number : 0;
     }
 
@@ -252,7 +260,12 @@ class Datatable extends Component
     }
     public function delete_user($id) : void
     {
-        User::where('id', $id)->delete();
+        $this->query_users_table()->where('id', $id)->delete();
+        
+        $user_rows = DB::table('user_rows')->first();
+        $total = $user_rows->number - 1;
+        DB::table('user_rows')->update(['number' => $total]);
+
         $this->make_datatable();
         $this->emit('cellVisibility');
     }
@@ -270,7 +283,7 @@ class Datatable extends Component
         $this->total = $this->get_user_rows();
 
         if($this->total > $this->maxP){
-            $this->sort = $this->sort == 'columns' ? 'latest' : null;
+            $this->sort = $this->sort == 'columns' || $this->sort == 'latest' ? 'latest' : null;
             $this->column = null;
             $this->order = null;
         } else {

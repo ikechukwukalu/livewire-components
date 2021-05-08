@@ -57,7 +57,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
          * latest | speed is very good,
          * null | speed is the fastest
          */
-        $sort = 'columns';
+        $sort = 'latest';
 
         /**
          * Max allowed for numbered paginator | switch to simple paginator

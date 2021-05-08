@@ -17,37 +17,41 @@
                 <span wire:loading.remove wire:target="export_to_csv">CSV</span>
             </button>
             @if ($total > $maxP)
-                @if (count($users) < 1 && strlen($search) > 0)
-                    <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
-                        <span>Search From Page 1</span>
+            @if (count($users) < 1 && strlen($search)> 0)
+                <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                    <span>Search From Page 1</span>
+                </button>
+                @elseif ($page > 1 && $page < $last_page) <button type="button" class="btn btn-danger"
+                    wire:click="gotoPage(1)" wire:loading.attr="disabled">
+                    <span>First Page</span>
                     </button>
-                @elseif ($page > 1 && $page < $last_page)
+                    <button type="button" class="btn btn-danger" wire:click="gotoPage({{ $last_page }})"
+                        wire:loading.attr="disabled">
+                        <span>Last Page</span>
+                    </button>
+                    @elseif ($page >= $last_page)
                     <button type="button" class="btn btn-danger" wire:click="gotoPage(1)" wire:loading.attr="disabled">
                         <span>First Page</span>
                     </button>
-                    <button type="button" class="btn btn-danger" wire:click="gotoPage({{ $last_page }})" wire:loading.attr="disabled">
+                    @else
+                    <button type="button" class="btn btn-danger" wire:click="gotoPage({{ $last_page }})"
+                        wire:loading.attr="disabled">
                         <span>Last Page</span>
                     </button>
-                @elseif ($page >= $last_page)
-                    <button type="button" class="btn btn-danger" wire:click="gotoPage(1)" wire:loading.attr="disabled">
-                        <span>First Page</span>
-                    </button>
-                @else
-                    <button type="button" class="btn btn-danger" wire:click="gotoPage({{ $last_page }})" wire:loading.attr="disabled">
-                        <span>Last Page</span>
-                    </button>
-                @endif
-            @else
-                @if (count($users) < 1 && strlen($search) > 0)
-                    <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
-                        <span>Search From Page 1</span>
-                    </button>
-                @elseif (count($users) < 1 && $page > 1)
-                    <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
-                        <span>Jump To Page 1</span>
-                    </button>
-                @endif
-            @endif
+                    @endif
+                    @else
+                    @if (count($users) < 1 && strlen($search)> 0)
+                        <button type="button" class="btn btn-primary" wire:click="gotoPage(1)"
+                            wire:loading.attr="disabled">
+                            <span>Search From Page 1</span>
+                        </button>
+                        @elseif (count($users) < 1 && $page> 1)
+                            <button type="button" class="btn btn-primary" wire:click="gotoPage(1)"
+                                wire:loading.attr="disabled">
+                                <span>Jump To Page 1</span>
+                            </button>
+                            @endif
+                            @endif
         </div>
     </div>
     <div class="col-md-6 pl-3 mb-2">
@@ -66,7 +70,8 @@
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
             <label>Search:</label>
-            <input type="text" wire:model.debounce.1000ms="search" class="form-control ml-1 search-input" placeholder="Search" />
+            <input type="text" wire:model.debounce.1000ms="search" class="form-control ml-1 search-input"
+                placeholder="Search" />
         </div>
     </div>
     <div class="col-md-12 mt-3 mb-3">
@@ -85,27 +90,29 @@
                 <thead>
                     <tr id="livewire-datatable-th">
                         @if($sort == 'columns')
-                            @foreach ($columns as $column)
-                                @if ($order_by[0] == $column['sort'])
-                                    @if ($order_by[1])
-                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
-                                        </th>
-                                    @else
-                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
-                                        </th>
-                                    @endif
-                                @else
-                                    <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                        <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
-                                    </th>
-                                @endif
-                            @endforeach
+                        @foreach ($columns as $column)
+                        @if ($order_by[0] == $column['sort'])
+                        @if ($order_by[1])
+                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
                         @else
-                            @foreach ($columns as $column)
-                                <th><div class="other-rows">{{ strtoupper($column['name']) }}</div></th>
-                            @endforeach
+                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
+                        @endif
+                        @else
+                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
+                        @endif
+                        @endforeach
+                        @else
+                        @foreach ($columns as $column)
+                        <th>
+                            <div class="other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
+                        @endforeach
                         @endif
                         <th>{{ __('Action') }}</th>
                     </tr>
@@ -113,80 +120,82 @@
                 <tfoot>
                     <tr>
                         @if($sort == 'columns')
-                            @foreach ($columns as $column)
-                                @if ($order_by[0] == $column['sort'])
-                                    @if ($order_by[1])
-                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
-                                        </th>
-                                    @else
-                                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                            <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
-                                        </th>
-                                    @endif
-                                @else
-                                    <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
-                                        <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
-                                    </th>
-                                @endif
-                            @endforeach
+                        @foreach ($columns as $column)
+                        @if ($order_by[0] == $column['sort'])
+                        @if ($order_by[1])
+                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
                         @else
-                            @foreach ($columns as $column)
-                                <th><div class="other-rows">{{ strtoupper($column['name']) }}</div></th>
-                            @endforeach
+                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
+                        @endif
+                        @else
+                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                            <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
+                        @endif
+                        @endforeach
+                        @else
+                        @foreach ($columns as $column)
+                        <th>
+                            <div class="other-rows">{{ strtoupper($column['name']) }}</div>
+                        </th>
+                        @endforeach
                         @endif
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </tfoot>
                 <tbody>
                     @forelse ($users as $user)
-                        <tr id="livewire-datatable-tr-{{ $user->id }}" data-id="{{ $user->id }}">
-                            <td>
-                                <div class="first-row">
-                                    <button data-id="{{ $user->id }}" type="button"
-                                        class="btn btn-primary btn-sm extra-columns"
-                                        style="display: none">+</button>&nbsp;&nbsp;<span>{{ $user->name }}</span>
+                    <tr id="livewire-datatable-tr-{{ $user->id }}" data-id="{{ $user->id }}">
+                        <td>
+                            <div class="first-row">
+                                <button data-id="{{ $user->id }}" type="button"
+                                    class="btn btn-primary btn-sm extra-columns"
+                                    style="display: none">+</button>&nbsp;&nbsp;<span>{{ $user->name }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->email }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->phone }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->gender }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->country }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->state }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->city }}</div>
+                        </td>
+                        <td>
+                            <div class="other-rows">{{ $user->address }}</div>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">
+                                    Click Me
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="javascript:void(0)"
+                                        onClick="update_user({{ json_encode($user) }})">Edit</a>
+                                    <a class="dropdown-item text-danger" href="javascript:void(0)"
+                                        onClick="delete_user({{ json_encode($user )}})">Delete</a>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->email }}</div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->phone }}</div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->gender }}</div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->country }}</div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->state }}</div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->city }}</div>
-                            </td>
-                            <td>
-                                <div class="other-rows">{{ $user->address }}</div>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown">
-                                        Click Me
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="javascript:void(0)"
-                                            onClick="update_user({{ $user }})">Edit</a>
-                                        <a class="dropdown-item text-danger" href="javascript:void(0)"
-                                            onClick="delete_user({{ $user }})">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td align="center" colspan="9">{{ $load_state }}</td>
-                        </tr>
+                    <tr>
+                        <td align="center" colspan="9">{{ $load_state }}</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -194,7 +203,8 @@
     </div>
     <div class="col-md-6 pl-3">
         <div class="float-left form-inline">
-            <label>Showing {{ number_format($current_page) }} to {{ number_format($set) }} of {{ number_format($total) }} entries</label>
+            <label>Showing {{ number_format($current_page) }} to {{ number_format($set) }} of
+                {{ number_format($total) }} entries</label>
         </div>
     </div>
     <div class="col-md-6 pr-3">
