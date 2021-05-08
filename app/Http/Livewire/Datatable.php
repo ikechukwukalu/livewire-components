@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+use App\Jobs\cachePage;
 use App\Jobs\cacheLastPage;
 use App\Jobs\cacheLastThreePages;
-use App\Jobs\cacheTwoPagesOnEachSide;
 
 class Datatable extends Component
 {
@@ -251,6 +251,28 @@ class Datatable extends Component
         $user_rows = DB::table('user_rows')->first();
         return isset($user_rows->number) && is_int($user_rows->number) ? $user_rows->number : 0;
     }
+    private function cache_page() :void 
+    {
+        $current_page = $this->page;
+        for ($i = $this->page; $i >= ($current_page - 2); $i --) {
+            if($i < 1)
+                break;
+
+            $cache = explode('.', $this->cache);
+            $cache[6] = $i;
+            $cache = implode('.', $cache);
+
+            cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+        }
+        for ($i = $this->page; $i <= ($current_page + 2); $i ++) {
+                
+            $cache = explode('.', $this->cache);
+            $cache[6] = $i;
+            $cache = implode('.', $cache);
+
+            cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+        }
+    }
 
     /**
      * Public Functions
@@ -333,8 +355,12 @@ class Datatable extends Component
          * Switch `cacheLastPage` for `cacheLastThreePages to cache the last 3 pages instead
         */
         
-        $cache = 'users.' . $this->fetch . '.' . $this->search . '.' . $this->column . '.' . $this->order . '.' . $this->sort . '.' . $this->last_page;
+        $cache = explode('.', $this->cache);
+        $cache[6] = $this->last_page;
+        $cache = implode('.', $cache);
+
         cacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP));
+        $this->cache_page();
 
         $this->emit('cellVisibility');
     }

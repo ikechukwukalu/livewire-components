@@ -69,7 +69,6 @@ class cacheLastThreePages implements ShouldQueue
      */
     public function handle()
     {
-        ini_set('max_execution_time', '300');
         $this->loop_last_three_pages();
     }
     
