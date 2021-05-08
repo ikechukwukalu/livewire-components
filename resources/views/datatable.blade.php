@@ -15,7 +15,8 @@
                         'fetch' => isset($_GET['fetch']) ? $_GET['fetch'] : $fetch,
                         'sort' => $sort,
                         'maxP' => $maxP,
-                        'last_page' => 1
+                        'last_page' => 1,
+                        'cache_time' => $cache_time
                     ])
                 </div>
             </div>

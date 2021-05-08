@@ -3,8 +3,14 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+
 use Livewire\Component;
 use Livewire\WithPagination;
+
+use App\Jobs\cacheLastPage;
+use App\Jobs\cacheLastThreePages;
+use App\Jobs\cacheTwoPagesOnEachSide;
 
 class Datatable extends Component
 {
@@ -25,12 +31,14 @@ class Datatable extends Component
     public $last_page;
     public $load_state = 'Initializing datatable component...';
     public $white_list = [];
+    public $cache_time;
 
     protected $queryString = ['search', 'fetch', 'column', 'order', 'sort'];
     protected $paginationTheme = 'bootstrap';
     protected $listeners = ['deleteUser' => 'delete_user', 'reloadDatatable' => 'make_datatable'];
 
     private $users = [];
+    private $cache;
 
     /**
      * Hooks
@@ -43,7 +51,7 @@ class Datatable extends Component
     }
 
     /**
-     * Private Functions
+     * Private Query Functions
      */
     private function query_users_table()
     {
@@ -53,6 +61,20 @@ class Datatable extends Component
     {
         return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
     }
+    private function search_query($query, $q) {
+        $query->orWhere('name', 'like', '%' . $q . '%')
+            ->orWhere('email', 'like', '%' . $q . '%')
+            ->orWhere('phone', 'like', '%' . $q . '%')
+            ->orWhere('gender', 'like', '%' . $q . '%')
+            ->orWhere('country', 'like', '%' . $q . '%')
+            ->orWhere('state', 'like', '%' . $q . '%')
+            ->orWhere('city', 'like', '%' . $q . '%')
+            ->orWhere('address', 'like', '%' . $q . '%');
+    }
+
+    /**
+     * Private Functions
+     */
     private function export_data_from_table($type = 'pdf', $json = false): void
     {
         $body = [];
@@ -101,7 +123,9 @@ class Datatable extends Component
     {
         if ($this->sort == "columns") {
             if (in_array($this->order_by[0], $this->white_list)) {
-                return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->paginate($this->fetch);
+                return Cache::remember($this->cache, $this->cache_time, function () {
+                    return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->paginate($this->fetch);
+                });
             } else {
                 session()->flash('fail', 'Invalid column value!');
                 return [];
@@ -117,47 +141,32 @@ class Datatable extends Component
         $q = trim($this->search);
         if ($this->sort == "columns") {
             if (in_array($this->order_by[0], $this->white_list)) {
-                return $this->fetch_users_table()->where(function ($query) use ($q) {
-                    $query->orWhere('name', 'like', '%' . $q . '%')
-                        ->orWhere('email', 'like', '%' . $q . '%')
-                        ->orWhere('phone', 'like', '%' . $q . '%')
-                        ->orWhere('gender', 'like', '%' . $q . '%')
-                        ->orWhere('country', 'like', '%' . $q . '%')
-                        ->orWhere('state', 'like', '%' . $q . '%')
-                        ->orWhere('city', 'like', '%' . $q . '%')
-                        ->orWhere('address', 'like', '%' . $q . '%');
-                })
+                return Cache::remember($this->cache, $this->cache_time, function () {
+                    return $this->fetch_users_table()->where(function ($query) use ($q) {
+                        $this->search_query($query, $q);
+                    })
                     ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
                     ->paginate($this->fetch);
+                });
             } else {
                 session()->flash('fail', 'Invalid column value!');
                 return [];
             }
         } elseif ($this->sort == "latest") {
-            return $this->fetch_users_table()->where(function ($query) use ($q) {
-                $query->orWhere('name', 'like', '%' . $q . '%')
-                    ->orWhere('email', 'like', '%' . $q . '%')
-                    ->orWhere('phone', 'like', '%' . $q . '%')
-                    ->orWhere('gender', 'like', '%' . $q . '%')
-                    ->orWhere('country', 'like', '%' . $q . '%')
-                    ->orWhere('state', 'like', '%' . $q . '%')
-                    ->orWhere('city', 'like', '%' . $q . '%')
-                    ->orWhere('address', 'like', '%' . $q . '%');
-            })
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->where(function ($query) use ($q) {
+                    $this->search_query($query, $q);
+                })
                 ->orderBy('id', 'desc')
                 ->paginate($this->fetch);
+            });
         } else {
-            return $this->fetch_users_table()->where(function ($query) use ($q) {
-                $query->orWhere('name', 'like', '%' . $q . '%')
-                    ->orWhere('email', 'like', '%' . $q . '%')
-                    ->orWhere('phone', 'like', '%' . $q . '%')
-                    ->orWhere('gender', 'like', '%' . $q . '%')
-                    ->orWhere('country', 'like', '%' . $q . '%')
-                    ->orWhere('state', 'like', '%' . $q . '%')
-                    ->orWhere('city', 'like', '%' . $q . '%')
-                    ->orWhere('address', 'like', '%' . $q . '%');
-            })
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->where(function ($query) use ($q) {
+                    $this->search_query($query, $q);
+                })
                 ->paginate($this->fetch);
+            });
         }
     }
     private function implement_simple_paginator(): object
@@ -171,54 +180,66 @@ class Datatable extends Component
     private function no_search_simple_paginator(): object
     {
         if ($this->sort == "columns") {
-            return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($this->fetch);
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($this->fetch);
+            });
         } elseif ($this->sort == "latest") {
-            return $this->fetch_users_table()->orderBy('id', 'desc')->simplePaginate($this->fetch);
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->orderBy('id', 'desc')->simplePaginate($this->fetch);
+            });
         } else {
-            return $this->fetch_users_table()->simplePaginate($this->fetch);
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->simplePaginate($this->fetch);
+            });
         }
     }
     private function with_search_simple_paginator(): object
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
-            return $this->fetch_users_table()->where(function ($query) use ($q) {
-                $query->orWhere('name', 'like', '%' . $q . '%')
-                    ->orWhere('email', 'like', '%' . $q . '%')
-                    ->orWhere('phone', 'like', '%' . $q . '%')
-                    ->orWhere('gender', 'like', '%' . $q . '%')
-                    ->orWhere('country', 'like', '%' . $q . '%')
-                    ->orWhere('state', 'like', '%' . $q . '%')
-                    ->orWhere('city', 'like', '%' . $q . '%')
-                    ->orWhere('address', 'like', '%' . $q . '%');
-            })
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->where(function ($query) use ($q) {
+                    $query->orWhere('name', 'like', '%' . $q . '%')
+                        ->orWhere('email', 'like', '%' . $q . '%')
+                        ->orWhere('phone', 'like', '%' . $q . '%')
+                        ->orWhere('gender', 'like', '%' . $q . '%')
+                        ->orWhere('country', 'like', '%' . $q . '%')
+                        ->orWhere('state', 'like', '%' . $q . '%')
+                        ->orWhere('city', 'like', '%' . $q . '%')
+                        ->orWhere('address', 'like', '%' . $q . '%');
+                })
                 ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
                 ->simplePaginate($this->fetch);
+            });
         } elseif ($this->sort == "latest") {
-            return $this->fetch_users_table()->where(function ($query) use ($q) {
-                $query->orWhere('name', 'like', '%' . $q . '%')
-                    ->orWhere('email', 'like', '%' . $q . '%')
-                    ->orWhere('phone', 'like', '%' . $q . '%')
-                    ->orWhere('gender', 'like', '%' . $q . '%')
-                    ->orWhere('country', 'like', '%' . $q . '%')
-                    ->orWhere('state', 'like', '%' . $q . '%')
-                    ->orWhere('city', 'like', '%' . $q . '%')
-                    ->orWhere('address', 'like', '%' . $q . '%');
-            })
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->where(function ($query) use ($q) {
+                    $query->orWhere('name', 'like', '%' . $q . '%')
+                        ->orWhere('email', 'like', '%' . $q . '%')
+                        ->orWhere('phone', 'like', '%' . $q . '%')
+                        ->orWhere('gender', 'like', '%' . $q . '%')
+                        ->orWhere('country', 'like', '%' . $q . '%')
+                        ->orWhere('state', 'like', '%' . $q . '%')
+                        ->orWhere('city', 'like', '%' . $q . '%')
+                        ->orWhere('address', 'like', '%' . $q . '%');
+                })
                 ->orderBy('id', 'desc')
                 ->simplePaginate($this->fetch);
+            });
         } else {
-            return $this->fetch_users_table()->where(function ($query) use ($q) {
-                $query->orWhere('name', 'like', '%' . $q . '%')
-                    ->orWhere('email', 'like', '%' . $q . '%')
-                    ->orWhere('phone', 'like', '%' . $q . '%')
-                    ->orWhere('gender', 'like', '%' . $q . '%')
-                    ->orWhere('country', 'like', '%' . $q . '%')
-                    ->orWhere('state', 'like', '%' . $q . '%')
-                    ->orWhere('city', 'like', '%' . $q . '%')
-                    ->orWhere('address', 'like', '%' . $q . '%');
-            })
+            return Cache::remember($this->cache, $this->cache_time, function () {
+                return $this->fetch_users_table()->where(function ($query) use ($q) {
+                    $query->orWhere('name', 'like', '%' . $q . '%')
+                        ->orWhere('email', 'like', '%' . $q . '%')
+                        ->orWhere('phone', 'like', '%' . $q . '%')
+                        ->orWhere('gender', 'like', '%' . $q . '%')
+                        ->orWhere('country', 'like', '%' . $q . '%')
+                        ->orWhere('state', 'like', '%' . $q . '%')
+                        ->orWhere('city', 'like', '%' . $q . '%')
+                        ->orWhere('address', 'like', '%' . $q . '%');
+                })
                 ->simplePaginate($this->fetch);
+            });
         }
     }
     private function get_user_rows(): int
@@ -230,7 +251,7 @@ class Datatable extends Component
     /**
      * Public Functions
      */
-    public function gotoPage($page): void
+    public function gotoPage(int $page): void
     {
         $this->page = $page;
         $this->emit('showPage', $this->page);
@@ -245,11 +266,11 @@ class Datatable extends Component
         $this->page += 1;
         $this->emit('showPage', $this->page);
     }
-    public function resort($column): void
+    public function resort(string $column): void
     {
         $this->order_by = [$column, $column != $this->order_by[0] ? true : !$this->order_by[1]];
     }
-    public function delete_user($id): void
+    public function delete_user(int $id): void
     {
         $this->query_users_table()->where('id', $id)->delete();
 
@@ -288,19 +309,27 @@ class Datatable extends Component
             if (isset($this->order_by[1])) {
                 $this->order = $this->order_by[1] ? 'asc' : 'desc';
             }
-
         }
 
         if (!in_array($this->fetch, $this->page_options)) {
             $this->fetch = $this->page_options[0];
         }
 
+        $this->cache = 'users.' . $this->fetch . '.' . $this->search . '.' . $this->column . '.' . $this->order . '.' . $this->sort . '.' . $this->page;
+
         $this->users = $this->total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
         $this->current_page = (($this->page * $this->fetch) - $this->fetch) + 1;
         $remainder = $this->total % $this->fetch;
         $pages = $remainder < 1 ? ($this->total - $remainder) / $this->fetch : (($this->total - $remainder) / $this->fetch) + 1;
         $this->set = $this->page < $pages ? $this->page * $this->fetch : $this->total;
-        $this->last_page = floor($this->total / $this->fetch);
+        $this->last_page = (int) ceil($this->total / $this->fetch);
+        
+        /***
+         * Cache::flush() - clear cache
+         * Switch `cacheLastThreePages` for `cacheLastPage to cache last 3 pages instead
+        */
+        cacheLastPage::dispatch($this->cache, $this->last_page, ($this->total > $this->maxP));
+
         $this->emit('cellVisibility');
     }
     public function render()

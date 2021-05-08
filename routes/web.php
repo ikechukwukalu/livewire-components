@@ -64,6 +64,11 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
          */
         $maxP = 5000;
 
+        /**
+         * Max allowed time for cached query to last
+         */
+        $cache_time = 300; // 5 minutes
+
         return view('datatable', [
             'columns' => $columns,
             'order_by' => $order_by,
@@ -71,6 +76,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
             'fetch' => $fetch,
             'sort' => $sort,
             'maxP' => $maxP,
+            'cache_time' => $cache_time,
         ]);
     })->name('datatable');
 
