@@ -442,11 +442,11 @@ function displayHiddenCells(e) {
             li.classList.add("list-group-item");
 
             var b = document.createElement("b");
-            if(thead_rows[inx].querySelector('.other-rows'))
+            if (thead_rows[inx].querySelector('.other-rows'))
                 b.innerHTML = thead_rows[inx].querySelector('.other-rows').innerHTML + ': ';
             else
                 b.innerHTML = thead_rows[inx].innerHTML + ': ';
-            
+
             li.appendChild(b);
             li.innerHTML = li.innerHTML + ele.innerHTML;
 
@@ -568,5 +568,8 @@ document.addEventListener("DOMContentLoaded", () => {
         cellVisibility();
     });
     init_responsive_table();
+    window.addEventListener('popstate', function(event) {
+        cellVisibility();
+    }, false);
 });
 </script>
