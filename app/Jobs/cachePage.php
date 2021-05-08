@@ -12,7 +12,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class cachePage implements ShouldQueue
+use App\Interfaces\UserDatatableQueryPagination;
+
+class cachePage implements ShouldQueue, UserDatatableQueryPagination
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -69,10 +71,6 @@ class cachePage implements ShouldQueue
      */
     public function handle()
     {
-        $this->cache_specific_pages();
-    }
-    
-    private function cache_specific_pages() {
         DB::disableQueryLog();
         $start = microtime(true);
         
@@ -94,15 +92,16 @@ class cachePage implements ShouldQueue
             echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_numbered_paginator" . " \n";
         }
     }
-    private function query_users_table()
+    
+    public function query_users_table()
     {
         return DB::table('users');
     }
-    private function fetch_users_table()
+    public function fetch_users_table()
     {
         return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
     }
-    private function search_query($query, $q)
+    public function search_query($query, $q)
     {
         $query->orWhere('name', 'like', '%' . $q . '%')
             ->orWhere('email', 'like', '%' . $q . '%')
@@ -113,7 +112,7 @@ class cachePage implements ShouldQueue
             ->orWhere('city', 'like', '%' . $q . '%')
             ->orWhere('address', 'like', '%' . $q . '%');
     }
-    private function implement_numbered_paginator(): object
+    public function implement_numbered_paginator(): object
     {
         if (trim($this->search) == "") {
             return $this->no_search_numbered_paginator();
@@ -122,7 +121,7 @@ class cachePage implements ShouldQueue
         }
 
     }
-    private function no_search_numbered_paginator(): object
+    public function no_search_numbered_paginator(): object
     {
         if ($this->sort == "columns") {
             if (in_array($this->order_by[0], $this->white_list)) {
@@ -139,7 +138,7 @@ class cachePage implements ShouldQueue
             return $this->fetch_users_table()->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
         }
     }
-    private function with_search_numbered_paginator(): object
+    public function with_search_numbered_paginator(): object
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
@@ -172,7 +171,7 @@ class cachePage implements ShouldQueue
             });
         }
     }
-    private function implement_simple_paginator(): object
+    public function implement_simple_paginator(): object
     {
         if (trim($this->search) == "") {
             return $this->no_search_simple_paginator();
@@ -180,7 +179,7 @@ class cachePage implements ShouldQueue
             return $this->with_search_simple_paginator();
         }
     }
-    private function no_search_simple_paginator(): object
+    public function no_search_simple_paginator(): object
     {
         if ($this->sort == "columns") {
             return Cache::remember($this->cache, 300, function () {
@@ -196,7 +195,7 @@ class cachePage implements ShouldQueue
             });
         }
     }
-    private function with_search_simple_paginator(): object
+    public function with_search_simple_paginator(): object
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
