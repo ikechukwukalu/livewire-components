@@ -99,6 +99,22 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         ]);
     })->name('get-mails');
 
+    Route::get('infinite/scroll', function () {
+        /*
+         *
+         *
+         * private $common_folders = [
+         *      'root' => 'INBOX',
+         *      'junk' => 'INBOX.Spam',
+         *      'drafts' => 'INBOX.Drafts',
+         *      'sent' => 'INBOX.Sent',
+         *      'trash' => 'INBOX.Trash'
+         * ]
+         */
+
+        return view('infinite-scroll');
+    })->name('infinite-scroll');
+
     Route::prefix('sortable')->group(function () {
         Route::get('basic', function () {
             return view('sortable-basic');

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Interfaces\UserDatatableQueryPagination;
 
-class cacheLastPage implements ShouldQueue, UserDatatableQueryPagination
+class datatableCachePage implements ShouldQueue, UserDatatableQueryPagination
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,7 +24,6 @@ class cacheLastPage implements ShouldQueue, UserDatatableQueryPagination
      * @return void
      */
     private $cache = null;
-    private $last_page = 1;
     private $simplePaginate = true;
     private $params = [];
 
@@ -38,11 +37,10 @@ class cacheLastPage implements ShouldQueue, UserDatatableQueryPagination
 
     public $page = null;
 
-    public function __construct(string $cache, int $last_page, bool $simplePaginate)
+    public function __construct(string $cache, int $page, bool $simplePaginate)
     {
         //
         $this->cache = $cache;
-        $this->last_page = $last_page;
         $this->simplePaginate = $simplePaginate;
 
         /*
@@ -61,7 +59,8 @@ class cacheLastPage implements ShouldQueue, UserDatatableQueryPagination
         $this->column = $this->params[3];
         $this->order = $this->params[4];
         $this->sort = $this->params[5];
-        $this->page = $last_page;
+        
+        $this->page = $page;
     }
 
     /**
@@ -73,22 +72,24 @@ class cacheLastPage implements ShouldQueue, UserDatatableQueryPagination
     {
         DB::disableQueryLog();
         $start = microtime(true);
+        
+        if ($this->simplePaginate) {
+            $time_elapsed_secs = microtime(true) - $start;
+            echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
 
-        $this->params[6] = $this->last_page;
-        $this->page = $this->last_page;
-        $this->cache = implode('.', $this->params);
+            $users = $this->implement_simple_paginator();
 
-        $time_elapsed_secs = microtime(true) - $start;
-        echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
+            $time_elapsed_secs = microtime(true) - $start;
+            echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_simple_paginator" . " \n";
+        } else {
+            $time_elapsed_secs = microtime(true) - $start;
+            echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
 
-        if ($this->simplePaginate)
-            $this->implement_simple_paginator();
-        else
-            $this->implement_numbered_paginator();
+            $users = $this->implement_numbered_paginator();
 
-
-        $time_elapsed_secs = microtime(true) - $start;
-        echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_simple_paginator" . " \n";
+            $time_elapsed_secs = microtime(true) - $start;
+            echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_numbered_paginator" . " \n";
+        }
     }
     
     public function query_users_table()

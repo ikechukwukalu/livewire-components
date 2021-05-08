@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Interfaces\UserDatatableQueryPagination;
 
-class cacheLastThreePages implements ShouldQueue, UserDatatableQueryPagination
+class datatableCacheLastThreePage implements ShouldQueue, UserDatatableQueryPagination
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

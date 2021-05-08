@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-use App\Jobs\cachePage;
-use App\Jobs\cacheLastPage;
-use App\Jobs\cacheLastThreePages;
+use App\Jobs\datatableCachePage;
+use App\Jobs\datatableCacheLastPage;
+use App\Jobs\datatableCacheLastThreePage;
 
 class Datatable extends Component
 {
@@ -244,7 +244,7 @@ class Datatable extends Component
             $cache = implode('.', $cache);
 
             if(Cache::has($cache) == false)
-                cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+                datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
         }
         for ($i = $this->page; $i <= ($current_page + 2); $i ++) {
                 
@@ -253,7 +253,7 @@ class Datatable extends Component
             $cache = implode('.', $cache);
 
             if(Cache::has($cache) == false)
-                cachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+                datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
         }
     }
 
@@ -335,7 +335,7 @@ class Datatable extends Component
         
         /***
          * Cache::flush() - clear cache
-         * Switch `cacheLastPage` for `cacheLastThreePages to cache the last 3 pages instead
+         * Switch `datatableCacheLastPage` for `datatableCacheLastThreePage to cache the last 3 pages instead
         */
         
         $cache = explode('.', $this->cache);
@@ -343,7 +343,7 @@ class Datatable extends Component
         $cache = implode('.', $cache);
 
         // Cache::flush();
-        cacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP));
+        datatableCacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP));
         $this->cache_page();
 
         $this->emit('cellVisibility');
