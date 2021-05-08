@@ -43,7 +43,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         /**
          * Dropdown options for the number of rows that can be fetched
          */
-        $page_options = [5, 10, 15, 25, 50];
+        $page_options = [5, 10, 15, 25, 50, 100, 250, 500, 1000];
 
         /**
          * Default page_options value

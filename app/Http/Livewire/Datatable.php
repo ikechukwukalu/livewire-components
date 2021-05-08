@@ -41,14 +41,6 @@ class Datatable extends Component
             $this->white_list[] = $column['sort'];
         }
     }
-    public function updatedFetch($value)
-    {
-        $this->make_datatable();
-    }
-    public function updatedSearch($value)
-    {
-        $this->make_datatable();
-    }
 
     /**
      * Private Functions
@@ -93,8 +85,7 @@ class Datatable extends Component
             }
 
         }
-
-        $this->make_datatable();
+        
         $this->emit('docMake', ['type' => $type, 'body' => $json ? json_encode($body) : $body]);
     }
     private function implement_numbered_paginator(): object
@@ -242,25 +233,21 @@ class Datatable extends Component
     public function gotoPage($page): void
     {
         $this->page = $page;
-        $this->make_datatable();
         $this->emit('showPage', $this->page);
     }
     public function previousPage(): void
     {
         $this->page > 1 ? $this->page -= 1 : 1;
-        $this->make_datatable();
         $this->emit('showPage', $this->page);
     }
     public function nextPage(): void
     {
         $this->page += 1;
-        $this->make_datatable();
         $this->emit('showPage', $this->page);
     }
     public function resort($column): void
     {
         $this->order_by = [$column, $column != $this->order_by[0] ? true : !$this->order_by[1]];
-        $this->make_datatable();
     }
     public function delete_user($id): void
     {
@@ -269,8 +256,7 @@ class Datatable extends Component
         $user_rows = DB::table('user_rows')->first();
         $total = $user_rows->number - 1;
         DB::table('user_rows')->update(['number' => $total]);
-
-        $this->make_datatable();
+        
         $this->emit('cellVisibility');
     }
     public function pdf_make(): void
@@ -315,9 +301,11 @@ class Datatable extends Component
         $pages = $remainder < 1 ? ($this->total - $remainder) / $this->fetch : (($this->total - $remainder) / $this->fetch) + 1;
         $this->set = $this->page < $pages ? $this->page * $this->fetch : $this->total;
         $this->last_page = floor($this->total / $this->fetch);
+        $this->emit('cellVisibility');
     }
     public function render()
     {
+        $this->make_datatable();
         return view('livewire.datatable', [
             'users' => $this->users,
         ]);

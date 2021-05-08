@@ -84,8 +84,8 @@
             @endif
         </div>
         <div class="table-responsive">
-            <table wire:init="make_datatable" id="livewire-datatable" class="table table-hover livewire-datatable"
-                wire:target="make_datatable, fetch, previousPage, nextPage, gotoPage, search, resort, delete_user"
+            <table id="livewire-datatable" class="table table-hover livewire-datatable"
+                wire:target="fetch, previousPage, nextPage, gotoPage, search, resort, delete_user"
                 wire:loading.class="datatable-loading">
                 <thead>
                     <tr id="livewire-datatable-th">
@@ -123,16 +123,16 @@
                         @foreach ($columns as $column)
                         @if ($order_by[0] == $column['sort'])
                         @if ($order_by[1])
-                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                        <th>
                             <div class="sorting sorting_asc other-rows">{{ strtoupper($column['name']) }}</div>
                         </th>
                         @else
-                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                        <th>
                             <div class="sorting sorting_desc other-rows">{{ strtoupper($column['name']) }}</div>
                         </th>
                         @endif
                         @else
-                        <th class="th_hover" wire:click="resort('{{ $column['sort'] }}')">
+                        <th>
                             <div class="sorting other-rows">{{ strtoupper($column['name']) }}</div>
                         </th>
                         @endif
@@ -442,10 +442,13 @@ function displayHiddenCells(e) {
             li.classList.add("list-group-item");
 
             var b = document.createElement("b");
-            b.innerHTML = thead_rows[inx].innerHTML;
-
+            if(thead_rows[inx].querySelector('.other-rows'))
+                b.innerHTML = thead_rows[inx].querySelector('.other-rows').innerHTML + ': ';
+            else
+                b.innerHTML = thead_rows[inx].innerHTML + ': ';
+            
             li.appendChild(b);
-            li.innerHTML = li.innerHTML + ': ' + ele.innerHTML;
+            li.innerHTML = li.innerHTML + ele.innerHTML;
 
             ul.appendChild(li);
         });
@@ -546,13 +549,6 @@ window.addEventListener('resize', (e) => {
 }, true);
 
 document.addEventListener("DOMContentLoaded", () => {
-    Livewire.hook('element.initialized', (el, component) => {
-        init_responsive_table();
-    });
-    Livewire.hook('element.updated', (el, component) => {
-        if (component.el.id !== 'myModal')
-            cellVisibility();
-    });
     Livewire.on('showPage', page => {
         document.getElementById('card-header').innerHTML = 'Livewire Datatable - <b>Page:</b> ' + page;
     });
@@ -571,5 +567,6 @@ document.addEventListener("DOMContentLoaded", () => {
     Livewire.on('cellVisibility', params => {
         cellVisibility();
     });
+    init_responsive_table();
 });
 </script>
