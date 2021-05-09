@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,18 +103,25 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
 
     Route::get('infinite/scroll', function () {
         /*
-         *
-         *
-         * private $common_folders = [
-         *      'root' => 'INBOX',
-         *      'junk' => 'INBOX.Spam',
-         *      'drafts' => 'INBOX.Drafts',
-         *      'sent' => 'INBOX.Sent',
-         *      'trash' => 'INBOX.Trash'
-         * ]
+         * Lifespan for cached query
          */
+        $cache_time = 300;
 
-        return view('infinite-scroll');
+        /*
+         * Amount of database items to fetch
+         */
+        $fetch = 15;
+
+        return view('infinite-scroll', [
+            'users' => Cache::remember('users.1', $cache_time, function () use($fetch) {
+                return DB::table('users')->select('id', 'name', 'phone', 'email', 'gender')
+                    ->skip(0)
+                    ->take($fetch)
+                    ->get();
+            }),
+            'cache_time' => $cache_time,
+            'fetch' => $fetch
+        ]);
     })->name('infinite-scroll');
 
     Route::prefix('sortable')->group(function () {

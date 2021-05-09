@@ -28,6 +28,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
     private $simplePaginate = true;
     private $params = [];
 
+    private $cache_time;
     private $order_by;
     private $search = null;
     private $fetch = 5;
@@ -38,12 +39,15 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
 
     public $page = null;
 
-    public function __construct(string $cache, int $last_page, bool $simplePaginate)
+    public function __construct(string $cache, int $last_page, bool $simplePaginate, array $order_by, int $cache_time, array $white_list)
     {
         //
         $this->cache = $cache;
         $this->last_page = $last_page;
         $this->simplePaginate = $simplePaginate;
+        $this->order_by = $order_by;
+        $this->cache_time = $cache_time;
+        $this->white_list = $white_list;
 
         /*
          * fetch -> [1]
@@ -123,7 +127,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
     {
         if ($this->sort == "columns") {
             if (in_array($this->order_by[0], $this->white_list)) {
-                return Cache::remember($this->cache, 300, function () {
+                return Cache::remember($this->cache, $this->cache_time, function () {
                     return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
                 });
             } else {
@@ -131,11 +135,11 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
                 return (object) [];
             }
         } elseif ($this->sort == "latest") {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->orderBy('id', 'desc')->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         } else {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         }
@@ -145,7 +149,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
         $q = trim($this->search);
         if ($this->sort == "columns") {
             if (in_array($this->order_by[0], $this->white_list)) {
-                return Cache::remember($this->cache, 300, function () {
+                return Cache::remember($this->cache, $this->cache_time, function () {
                     return $this->fetch_users_table()->where(function ($query) {
                         $this->search_query($query);
                     })
@@ -157,7 +161,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
                 return (object) [];
             }
         } elseif ($this->sort == "latest") {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
@@ -165,7 +169,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
                     ->paginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         } else {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
@@ -184,15 +188,15 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
     public function no_search_simple_paginator(): object
     {
         if ($this->sort == "columns") {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')->simplePaginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         } elseif ($this->sort == "latest") {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->orderBy('id', 'desc')->simplePaginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         } else {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->simplePaginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         }
@@ -201,7 +205,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
     {
         $q = trim($this->search);
         if ($this->sort == "columns") {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
@@ -209,7 +213,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
                     ->simplePaginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         } elseif ($this->sort == "latest") {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
@@ -217,7 +221,7 @@ class datatableCacheLastPage implements ShouldQueue, UserDatatableQueryPaginatio
                     ->simplePaginate($perPage = $this->fetch, $columns = ['*'], $pageName = 'page', $page = $this->page);
             });
         } else {
-            return Cache::remember($this->cache, 300, function () {
+            return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })

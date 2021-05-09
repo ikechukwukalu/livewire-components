@@ -2,15 +2,13 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
+use App\Jobs\datatableCacheLastPage;
+use App\Jobs\datatableCachePage;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-
-use App\Jobs\datatableCachePage;
-use App\Jobs\datatableCacheLastPage;
-use App\Jobs\datatableCacheLastThreePage;
 
 class Datatable extends Component
 {
@@ -40,7 +38,8 @@ class Datatable extends Component
     private $users = [];
     private $cache;
 
-    public function __construct() {
+    public function __construct()
+    {
         ini_set('max_execution_time', '120');
     }
 
@@ -65,7 +64,8 @@ class Datatable extends Component
     {
         return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
     }
-    private function search_query($query) {
+    private function search_query($query)
+    {
         $query->orWhere('name', 'like', '%' . $this->search . '%')
             ->orWhere('email', 'like', '%' . $this->search . '%')
             ->orWhere('phone', 'like', '%' . $this->search . '%')
@@ -111,7 +111,7 @@ class Datatable extends Component
             }
 
         }
-        
+
         $this->emit('docMake', ['type' => $type, 'body' => $json ? json_encode($body) : $body]);
     }
     private function implement_numbered_paginator(): object
@@ -152,8 +152,8 @@ class Datatable extends Component
                     return $this->fetch_users_table()->where(function ($query) {
                         $this->search_query($query);
                     })
-                    ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
-                    ->paginate($this->fetch);
+                        ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
+                        ->paginate($this->fetch);
                 });
             } else {
                 session()->flash('fail', 'Invalid column value!');
@@ -164,15 +164,15 @@ class Datatable extends Component
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
-                ->orderBy('id', 'desc')
-                ->paginate($this->fetch);
+                    ->orderBy('id', 'desc')
+                    ->paginate($this->fetch);
             });
         } else {
             return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
-                ->paginate($this->fetch);
+                    ->paginate($this->fetch);
             });
         }
     }
@@ -207,23 +207,23 @@ class Datatable extends Component
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
-                ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
-                ->simplePaginate($this->fetch);
+                    ->orderBy($this->order_by[0], $this->order_by[1] ? 'asc' : 'desc')
+                    ->simplePaginate($this->fetch);
             });
         } elseif ($this->sort == "latest") {
             return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
-                ->orderBy('id', 'desc')
-                ->simplePaginate($this->fetch);
+                    ->orderBy('id', 'desc')
+                    ->simplePaginate($this->fetch);
             });
         } else {
             return Cache::remember($this->cache, $this->cache_time, function () {
                 return $this->fetch_users_table()->where(function ($query) {
                     $this->search_query($query);
                 })
-                ->simplePaginate($this->fetch);
+                    ->simplePaginate($this->fetch);
             });
         }
     }
@@ -232,28 +232,27 @@ class Datatable extends Component
         $user_rows = DB::table('user_rows')->first();
         return isset($user_rows->number) && is_int($user_rows->number) ? $user_rows->number : 0;
     }
-    private function cache_page() :void 
+    private function cache_page(): void
     {
         $current_page = $this->page;
-        for ($i = $this->page; $i >= ($current_page - 2); $i --) {
-            if($i < 1)
+        for ($i = $this->page; $i >= ($current_page - 2); $i--) {
+            if ($i < 1) {
                 break;
+            }
 
             $cache = explode('.', $this->cache);
             $cache[6] = $i;
             $cache = implode('.', $cache);
 
-            if(Cache::has($cache) == false)
-                datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+            datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list);
         }
-        for ($i = $this->page; $i <= ($current_page + 2); $i ++) {
-                
+        for ($i = $this->page; $i <= ($current_page + 2); $i++) {
+
             $cache = explode('.', $this->cache);
             $cache[6] = $i;
             $cache = implode('.', $cache);
 
-            if(Cache::has($cache) == false)
-                datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP));
+            datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list);
         }
     }
 
@@ -286,7 +285,7 @@ class Datatable extends Component
         $user_rows = DB::table('user_rows')->first();
         $total = $user_rows->number - 1;
         DB::table('user_rows')->update(['number' => $total]);
-        
+
         $this->emit('cellVisibility');
     }
     public function pdf_make(): void
@@ -332,18 +331,19 @@ class Datatable extends Component
         $pages = $remainder < 1 ? ($this->total - $remainder) / $this->fetch : (($this->total - $remainder) / $this->fetch) + 1;
         $this->set = $this->page < $pages ? $this->page * $this->fetch : $this->total;
         $this->last_page = (int) ceil($this->total / $this->fetch);
-        
+
         /***
          * Cache::flush() - clear cache
+         * use App\Jobs\datatableCacheLastThreePage;
          * Switch `datatableCacheLastPage` for `datatableCacheLastThreePage to cache the last 3 pages instead
-        */
-        
+         */
+
         $cache = explode('.', $this->cache);
         $cache[6] = $this->last_page;
         $cache = implode('.', $cache);
+        
+        datatableCacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list);
 
-        // Cache::flush();
-        datatableCacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP));
         $this->cache_page();
 
         $this->emit('cellVisibility');
