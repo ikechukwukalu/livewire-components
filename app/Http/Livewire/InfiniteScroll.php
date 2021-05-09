@@ -21,11 +21,11 @@ class InfiniteScroll extends Component
 
     private $cache;
 
-    public function fetch_users($num) : void
+    public function fetch_users() : void
     {
         // if($this->page == 6) // Uncomment this for test purposes
         //     $this->no_more_users();
-        if($num == 2) {
+        if($this->no_user == 2) {
             $this->page ++;
             $this->cache = 'users.' . $this->page;
             $skip = ($this->fetch * $this->page) - $this->fetch;

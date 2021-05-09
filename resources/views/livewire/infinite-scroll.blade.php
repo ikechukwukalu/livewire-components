@@ -38,14 +38,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if ((parseFloat(window.pageYOffset) + parseFloat(window.innerHeight) + parseInt(24)) >= document
             .documentElement.scrollHeight) {
             if (val == 2)
-                Livewire.emit('usersInfinityScroll', val);
+                Livewire.emit('usersInfinityScroll');
             else
                 Livewire.emit('noMoreUsers');
         }
     });
-    Livewire.on("usersInfinityScroll", (num) => {
+    Livewire.on("usersInfinityScroll", () => {
         document.getElementById('loader').style.display = 'block';
-        @this.fetch_users(num);
+        @this.fetch_users();
     });
     Livewire.on("appendUsers", (ary) => {
         document.getElementById('loader').style.display = 'none';
