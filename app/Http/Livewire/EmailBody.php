@@ -45,7 +45,7 @@ class EmailBody extends Component
             ];
 
             $this->emit('emailBody', $body);
-        } catch (\Illuminate\Database\QueryException | Exception | Symfony\Component\ErrorHandler\Error\FatalError $e) {
+        } catch (\Illuminate\Database\QueryException | \Exception | \Symfony\Component\ErrorHandler\Error\FatalError $e) {
             $client = Client::account('default');
             $client->connect();
     

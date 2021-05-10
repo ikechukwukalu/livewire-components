@@ -23,7 +23,7 @@ class SearchEmail extends Component
     public $cacheTime;
 
     private $cache;
-    
+
     public function show_dropdown(): void
     {
         if (strlen(trim($this->text)) > 0) {
@@ -116,7 +116,7 @@ class SearchEmail extends Component
             ];
 
             $this->emit('emailBody', $body);
-        } catch (\Illuminate\Database\QueryException | Exception | Symfony\Component\ErrorHandler\Error\FatalError $e) {
+        } catch (\Illuminate\Database\QueryException | \Exception | \Symfony\Component\ErrorHandler\Error\FatalError $e) {
             $client = Client::account('default');
             $client->connect();
     
