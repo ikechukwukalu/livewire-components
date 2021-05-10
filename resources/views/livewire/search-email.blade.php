@@ -1,4 +1,4 @@
-<div class="row justify-content-center">
+<div id="search-email-root" class="row justify-content-center">
     <div class="col-md-10">
         <div class="w-100">
             @if (session()->has('info'))
@@ -16,7 +16,7 @@
             <div class="input-group w-100">
                 <input type="text" name="search" class="form-control" id="search-email"
                     placeholder="Search email subject and body..." wire:model.defer="text" autocomplete="off" />
-                <input type="hidden" id="search-scroll" value="{{ $scroll }}">
+                <input type="hidden" id="search-scroll" value="{{ $scroll }}" />
                 <div class="input-group-append">
                     @if ($display == 'none')
                     <button class="btn btn-primary" wire:loading.attr="disabled" wire:click="show_dropdown"
@@ -35,7 +35,8 @@
             </div>
             <div class="dropdown-search">
                 <div id="dropdown-backdrop" wire:loading.class="mail-list-loading custom-show"
-                    wire:target="search_for_emails, imap_email_body, no_more_emails"></div>
+                    wire:target="search_for_emails, imap_email_body, no_more_emails">
+                </div>
                 <div id="search-dropdown-menu" class="dropdown-search-menu shadow-sm w-100 px-3 pt-3"
                     style="display: {{ $display }}">
                     @forelse ($results as $result)
@@ -55,36 +56,31 @@
                     <a class="dropdown-item text-center pt-1" href="javascript:void(0)">
                         No matching emails
                     </a>
-                    <!-- 
-                            Uncommenting that ↑ causes the first element in the loop to become dormant. 
-                            It's a bug i'm still trying to fix. 
-                            So i've provided a dirty hack.
-                            By including this <a class="dropdown-item text-center" style="display: none"></a>
-                            above the first element, the problem is resolved.
-                        -->
                     @endforelse
                 </div>
             </div>
         </div>
+        <script>
+        document.querySelector('.dropdown-search-menu').addEventListener("scroll", (e) => {
+            var val = document.getElementById('search-scroll').value;
+            var element = e.target;
+            if ((parseFloat(element.scrollTop) + parseFloat(element.offsetHeight)) >= element.scrollHeight) {
+                if (val == 2)
+                    Livewire.emit('searchEmailInfinityScroll', val);
+                else
+                    Livewire.emit('NoMoreEmails');
+            }
+        });
+        document.addEventListener("DOMContentLoaded", () => {
+            Livewire.on("searchEmailInfinityScroll", (text) => {
+                // @this.search_for_emails(text); //This is the conventional code, but isn't working, because @this gives of window.livewire.find('')
+                window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).search_for_emails(text); // This is a dirty hack
+            });
+            Livewire.on("NoMoreEmails", () => {
+                // @this.no_more_emails(); //This is the conventional code, but isn't working, because @this gives of window.livewire.find('')
+                window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).no_more_emails(); // This is a dirty hack
+            });
+        });
+        </script>
     </div>
 </div>
-<script>
-document.querySelector('.dropdown-search-menu').addEventListener("scroll", (e) => {
-    var val = document.getElementById('search-scroll').value;
-    var element = e.target;
-    if ((parseFloat(element.scrollTop) + parseFloat(element.offsetHeight)) >= element.scrollHeight) {
-        if (val == 2)
-            Livewire.emit('searchEmailInfinityScroll', val);
-        else
-            Livewire.emit('NoMoreEmails');
-    }
-});
-document.addEventListener("DOMContentLoaded", () => {
-    Livewire.on("searchEmailInfinityScroll", (text) => {
-        @this.search_for_emails(text);
-    });
-    Livewire.on("NoMoreEmails", () => {
-        @this.no_more_emails();
-    });
-});
-</script>

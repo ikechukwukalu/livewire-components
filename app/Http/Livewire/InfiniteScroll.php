@@ -27,7 +27,7 @@ class InfiniteScroll extends Component
         //     $this->no_more_users();
         if($this->no_user == 2) {
             $this->page ++;
-            $this->cache = 'users.' . $this->page;
+            $this->cache = 'infinite-users.' . $this->page;
             $skip = ($this->fetch * $this->page) - $this->fetch;
             $users = Cache::remember($this->cache, $this->cache_time, function () use($skip) {
                 return DB::table('users')->select('id', 'name', 'phone', 'email', 'gender')
@@ -37,7 +37,7 @@ class InfiniteScroll extends Component
             });
             
             $page = $this->page + 1;
-            $cache = 'users.' . $page;
+            $cache = 'infinite-users.' . $page;
         
             infiniteScrollCacheNextPage::dispatchIf(!Cache::has($cache), $cache, $page, $this->fetch, $this->cache_time);
             $this->emit('appendUsers', ['users' => $users]);

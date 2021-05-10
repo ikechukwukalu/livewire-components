@@ -64,7 +64,7 @@ class Datatable extends Component
     {
         return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
     }
-    private function search_query($query)
+    private function search_query(string $query)
     {
         $query->orWhere('name', 'like', '%' . $this->search . '%')
             ->orWhere('email', 'like', '%' . $this->search . '%')
@@ -79,7 +79,7 @@ class Datatable extends Component
     /**
      * Private Functions
      */
-    private function export_data_from_table($type = 'pdf', $json = false): void
+    private function export_data_from_table(string $type = 'pdf', bool $json = false): void
     {
         $body = [];
         $total = $this->get_user_rows();
@@ -323,7 +323,7 @@ class Datatable extends Component
             $this->fetch = $this->page_options[0];
         }
 
-        $this->cache = 'users.' . $this->fetch . '.' . $this->search . '.' . $this->column . '.' . $this->order . '.' . $this->sort . '.' . $this->page;
+        $this->cache = 'datatable-users.' . $this->fetch . '.' . $this->search . '.' . $this->column . '.' . $this->order . '.' . $this->sort . '.' . $this->page;
 
         $this->users = $this->total > $this->maxP ? $this->implement_simple_paginator() : $this->implement_numbered_paginator();
         $this->current_page = (($this->page * $this->fetch) - $this->fetch) + 1;

@@ -9,9 +9,12 @@
     </div>
     <div class="col-md-6">
         @livewire('get-mails', [
-            'email' => $sender,
-            'webmails' => [],
-            'root' => $folder
+        'email' => $sender,
+        'webmails' => [],
+        'root' => $folder,
+        'cacheTime' => $cache_time,
+        'take' => $fetch,
+        'commonFolders' => $common_folders
         ])
     </div>
     <div class="col-md-6">

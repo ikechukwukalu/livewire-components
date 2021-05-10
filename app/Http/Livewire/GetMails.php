@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Jobs\getEmailCacheNextPage;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Webklex\IMAP\Facades\Client;
@@ -13,37 +15,42 @@ class GetMails extends Component
     public $webmails;
     public $email;
     public $root;
+    public $take;
+    public $cacheTime;
     public $load_state = 'Initializing email component...';
+    public $commonFolders;
 
-    private $common_folders = [
-        'root' => 'INBOX',
-        'junk' => 'INBOX.Spam',
-        'drafts' => 'INBOX.Drafts',
-        'sent' => 'INBOX.Sent',
-        'trash' => 'INBOX.Trash',
-    ];
+    private $cache;
+
     private $links = null;
 
     protected $paginationTheme = 'bootstrap';
 
-    public function imap_emails() : void
-    {
-        $client = Client::account('default');
-        $client->connect();
-
+    public function imap_emails(): void
+    {   
         $this->webmails = [];
+        $this->cache = 'getEmail-users.' . $this->page;
+        $messages = Cache::remember($this->cache, $this->cacheTime, function () {
+            $client = Client::account('default');
+            $client->connect();
 
-        $folder = $client->getFolderByPath($this->common_folders[$this->root]);
-        $messages = $folder->query()
+            $folder = $client->getFolderByPath($this->commonFolders[$this->root]);
+
+            $result = $folder->query()
             // ->since('01.03.2021') // created_at
             // ->before('14.04.2021') // completed_at
-            ->all()
-            ->from($this->email)
+                ->all()
+                ->from($this->email)
             // ->to($this->email)
-            ->setFetchBody(false)
-            ->fetchOrderDesc()
-            ->leaveUnread()
-            ->paginate(5, $this->page);
+                ->setFetchBody(false)
+                ->fetchOrderDesc()
+                ->leaveUnread()
+                ->paginate($this->take, $this->page);
+
+            $client->disconnect();
+
+            return $result;
+        });
 
         $this->links = $messages->links();
         $i = $messages->count() - 1;
@@ -55,27 +62,36 @@ class GetMails extends Component
 
             $i--;
         }
-        if(count($this->webmails) < 1)
+        if (count($this->webmails) < 1) {
             $this->load_state = 'No emails found';
+        }
 
-        $client->disconnect();
+        $page = $this->page + 1;
+        $cache = 'getEmail-users.' . $page;
+
+        getEmailCacheNextPage::dispatchIf(!Cache::has($cache), $cache, $page, $this->take, $this->cacheTime, $this->commonFolders, $this->root, $this->email);
     }
 
-    public function gotoPage($page) : void
+    public function gotoPage(int $page): void
     {
         $this->page = $page;
         $this->imap_emails();
     }
 
-    public function previousPage() : void
+    public function previousPage(): void
     {
         $this->page > 1 ? $this->page -= 1 : 1;
         $this->imap_emails();
     }
 
-    public function nextPage() : void
+    public function nextPage(): void
     {
         $this->page += 1;
+        $this->imap_emails();
+    }
+
+    public function cacheProblem() : void {
+        session()->flash('danger', 'We encountered some problems while loading this email. It could not be cached. It seems to contain embedded images and files that are quite heavy when loading.');
         $this->imap_emails();
     }
 

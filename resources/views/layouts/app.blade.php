@@ -10,6 +10,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}" />
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @livewireStyles
+    @livewireScripts
 </head>
 
 <body class="bg-light">
@@ -69,7 +70,6 @@
         @yield('content')
     </main>
 
-    @livewireScripts
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>

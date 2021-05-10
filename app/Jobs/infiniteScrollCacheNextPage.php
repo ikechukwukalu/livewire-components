@@ -58,6 +58,6 @@ class infiniteScrollCacheNextPage implements ShouldQueue
         });
 
         $time_elapsed_secs = microtime(true) - $start;
-        echo "Part 2: " . $time_elapsed_secs . ", Paginator: " . "implement_simple_paginator" . " \n";
+        echo "Part 2: " . $time_elapsed_secs . ", Fetched next list of users " . " \n";
     }
 }

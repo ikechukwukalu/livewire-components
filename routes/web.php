@@ -95,15 +95,39 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
          * ]
          */
 
+        /*
+         * Max allowed time for cached query to last
+         */
+        $cache_time = 300;
+
+        /*
+         * Amount of email items to fetch
+         */
+        $fetch = 5; // Recommended
+
+        /*
+         * Common folders array
+         */
+        $common_folders = [
+            'root' => 'INBOX',
+            'junk' => 'INBOX.Spam',
+            'drafts' => 'INBOX.Drafts',
+            'sent' => 'INBOX.Sent',
+            'trash' => 'INBOX.Trash',
+        ];
+
         return view('get-mails', [
             'sender' => 'info@provirtcomm.com',
             'folder' => 'root',
+            'cache_time' => $cache_time,
+            'fetch' => $fetch,
+            'common_folders' => $common_folders
         ]);
     })->name('get-mails');
 
     Route::get('infinite/scroll', function () {
         /*
-         * Lifespan for cached query
+         * Max allowed time for cached query to last
          */
         $cache_time = 300;
 
@@ -113,7 +137,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         $fetch = 15;
 
         return view('infinite-scroll', [
-            'users' => Cache::remember('users.1', $cache_time, function () use($fetch) {
+            'users' => Cache::remember('infinite-users.1', $cache_time, function () use($fetch) {
                 return DB::table('users')->select('id', 'name', 'phone', 'email', 'gender')
                     ->skip(0)
                     ->take($fetch)
