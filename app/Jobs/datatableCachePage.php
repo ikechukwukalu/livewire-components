@@ -104,7 +104,7 @@ class datatableCachePage implements ShouldQueue, UserDatatableQueryPagination
     {
         return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
     }
-    public function search_query($query)
+    public function search_query(object $query)
     {
         $query->orWhere('name', 'like', '%' . $this->search . '%')
             ->orWhere('email', 'like', '%' . $this->search . '%')

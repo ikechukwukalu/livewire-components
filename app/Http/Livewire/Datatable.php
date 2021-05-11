@@ -64,7 +64,7 @@ class Datatable extends Component
     {
         return $this->query_users_table()->select('id', 'name', 'email', 'phone', 'gender', 'country', 'state', 'city', 'address');
     }
-    private function search_query(string $query)
+    private function search_query(object $query)
     {
         $query->orWhere('name', 'like', '%' . $this->search . '%')
             ->orWhere('email', 'like', '%' . $this->search . '%')
