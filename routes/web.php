@@ -36,9 +36,9 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         ];
 
         /**
-         * ['column', 'true - asc|false - desc'] is effective if [sort] is set to columns
+         * ['column', 'true - asc|false - desc'] is effective if $sort is set to columns
          * To prevent SQL injection for this example I've whitelisted the necessary columns
-         * by including them into the $white_list array
+         * by including them into a $white_list array
          */
         $order_by = [$columns[0]['sort'], true];
 
@@ -55,7 +55,7 @@ Route::middleware(['throttle:50,1'])->group(function () { //Rate limiting||Preve
         /**
          * Sort Table
          * -----------
-         * columns | not recommended for large records exceeding 1k,
+         * columns | not recommended for large records exceeding 5k,
          * latest | speed is very good,
          * null | speed is the fastest
          */
