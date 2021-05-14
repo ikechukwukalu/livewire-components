@@ -2,9 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Jobs\datatableCacheLastPage;
-use App\Jobs\datatableCachePage;
-
+use App\Events\datatableEvent;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -232,29 +230,6 @@ class Datatable extends Component
         $user_rows = DB::table('user_rows')->first();
         return isset($user_rows->number) && is_int($user_rows->number) ? $user_rows->number : 0;
     }
-    private function cache_page(): void
-    {
-        $current_page = $this->page;
-        for ($i = $this->page; $i >= ($current_page - 2); $i--) {
-            if ($i < 1) {
-                break;
-            }
-
-            $cache = explode('.', $this->cache);
-            $cache[6] = $i;
-            $cache = implode('.', $cache);
-
-            datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list);
-        }
-        for ($i = $this->page; $i <= ($current_page + 2); $i++) {
-
-            $cache = explode('.', $this->cache);
-            $cache[6] = $i;
-            $cache = implode('.', $cache);
-
-            datatableCachePage::dispatchIf(!Cache::has($cache), $cache, $i, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list);
-        }
-    }
 
     /**
      * Public Functions
@@ -334,17 +309,8 @@ class Datatable extends Component
 
         /***
          * Cache::flush() - clear cache
-         * use App\Jobs\datatableCacheLastThreePage;
-         * Switch `datatableCacheLastPage` for `datatableCacheLastThreePage to cache the last 3 pages instead
          */
-
-        $cache = explode('.', $this->cache);
-        $cache[6] = $this->last_page;
-        $cache = implode('.', $cache);
-        
-        datatableCacheLastPage::dispatchIf(!Cache::has($cache), $this->cache, $this->last_page, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list);
-
-        $this->cache_page();
+        datatableEvent::dispatch($this->cache, $this->page, ($this->total > $this->maxP), $this->order_by, $this->cache_time, $this->white_list, $this->last_page);
 
         $this->emit('cellVisibility');
     }
