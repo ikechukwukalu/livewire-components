@@ -20,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     /***
-     * Switch `datatableCacheLastPage` for `datatableCacheLastThreePage to cache the last 3 pages instead
+     * Switch `datatableCacheLastThreePagesListener` for `datatableCachePageListener to cache the last 3 pages instead
      */
     protected $listen = [
         Registered::class => [
