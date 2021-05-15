@@ -17,7 +17,7 @@
                 <span wire:loading.remove wire:target="export_to_csv">CSV</span>
             </button>
             @if ($total > $maxP)
-            @if (count($users) < 1 && strlen($search)> 0)
+            @if (count(is_countable($users) ? $users : []) < 1 && strlen($search)> 0)
                 <button type="button" class="btn btn-primary" wire:click="gotoPage(1)" wire:loading.attr="disabled">
                     <span>Search From Page 1</span>
                 </button>
@@ -40,12 +40,12 @@
                     </button>
                     @endif
                     @else
-                    @if (count($users) < 1 && strlen($search)> 0)
+                    @if (count(is_countable($users) ? $users : []) < 1 && strlen($search)> 0)
                         <button type="button" class="btn btn-primary" wire:click="gotoPage(1)"
                             wire:loading.attr="disabled">
                             <span>Search From Page 1</span>
                         </button>
-                        @elseif (count($users) < 1 && $page> 1)
+                        @elseif (count(is_countable($users) ? $users : []) < 1 && $page> 1)
                             <button type="button" class="btn btn-primary" wire:click="gotoPage(1)"
                                 wire:loading.attr="disabled">
                                 <span>Jump To Page 1</span>
@@ -209,7 +209,7 @@
     </div>
     <div class="col-md-6 pr-3">
         <div class="float-right form-inline">
-            @if(count($users) > 0)
+            @if(count(is_countable($users) ? $users : []) > 0)
             {{ $users->onEachSide(2)->links() }}
             @endif
         </div>

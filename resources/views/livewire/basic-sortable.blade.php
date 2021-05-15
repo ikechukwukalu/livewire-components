@@ -4,9 +4,9 @@
             @forelse ($politicians as $politician)
             <li class="list-group-item" wire:sortable.item="{{ $politician->id }}" wire:key="politician-{{ $politician->id }}">
                 <span wire:sortable.handle>
+                    <span class="badge badge-secondary p-2">POSITION:</span>&nbsp;{{ $politician->political_position_id }},&nbsp;
                     <b>NAME:</b>&nbsp;{{ $politician->name }},&nbsp;
-                    <b>APPOINTMENT:</b>&nbsp;{{ $politician->position }},&nbsp;
-                    <b>POSITION:</b>&nbsp;{{ $politician->political_position_id }}
+                    <b>APPOINTMENT:</b>&nbsp;{{ $politician->position }}
                 </span>
             </li>
             @empty
