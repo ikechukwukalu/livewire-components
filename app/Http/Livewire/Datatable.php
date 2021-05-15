@@ -36,11 +36,6 @@ class Datatable extends Component
     private $users = [];
     private $cache;
 
-    public function __construct()
-    {
-        ini_set('max_execution_time', '120');
-    }
-
     /**
      * Hooks
      */
