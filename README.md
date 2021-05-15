@@ -176,4 +176,5 @@ IMAP_PROTOCOL=imap
 •	Run ``npm install``, ``npm run watch`` for development\
 •   Run ``npm run prod`` for production\
 •   Run ``php artisan serve``\
-•   Run ``php artisan queue:work``
+•   Run ``php artisan queue:work``\
+•   Run ``php artisan websockets:serve``

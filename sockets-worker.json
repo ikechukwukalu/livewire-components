@@ -1,0 +1,5 @@
+{
+    "name": "laravel-websockets",
+    "script": "php artisan websockets:serve",
+    "args": ""
+  }

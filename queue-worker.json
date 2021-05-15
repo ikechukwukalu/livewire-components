@@ -1,0 +1,5 @@
+{
+  "name": "apps",
+  "script": "php artisan queue:work",
+  "args": ""
+}
