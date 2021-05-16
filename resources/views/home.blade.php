@@ -43,7 +43,7 @@
                     alt="livewire sortable basic">
                     </a>
                 <div class="card-body">
-                    <h4 class="card-title" align="center"><a href="{{ route('sortable-basic') }}">Livewire Sortable Basic</a></h4>
+                    <h4 class="card-title" align="center"><a href="{{ route('sortable-basic') }}">Livewire Sortable - Basic</a></h4>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
                     alt="livewire sortable complex">
                     </a>
                 <div class="card-body">
-                    <h4 class="card-title" align="center"><a href="{{ route('sortable-complex') }}">Livewire Sortable Complex</a></h4>
+                    <h4 class="card-title" align="center"><a href="{{ route('sortable-complex') }}">Livewire Sortable - Complex</a></h4>
                 </div>
             </div>
         </div>
