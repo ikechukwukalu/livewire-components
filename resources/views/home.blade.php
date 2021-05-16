@@ -47,6 +47,17 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="card w-100 shadow-sm mb-3">
+            <a href="{{ route('sortable-complex') }}">
+                <img class="card-img-top" src="{{ asset('images/components/livewire-sortablecomplex.png')}}"
+                    alt="livewire sortable complex">
+                    </a>
+                <div class="card-body">
+                    <h4 class="card-title" align="center"><a href="{{ route('sortable-complex') }}">Livewire Sortable Complex</a></h4>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
