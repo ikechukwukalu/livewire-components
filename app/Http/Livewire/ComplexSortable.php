@@ -35,11 +35,20 @@ class ComplexSortable extends Component
         foreach(staff::where('department_id', $id)->get() as $staff) {
             $staff->delete();
         }
-        department::find($id)->delete();
+        department::where('id', $id)->delete();
     }
 
     public function removeStaff($id) : void {
-        staff::find($id)->delete();
+        $st = staff::where('id', $id)->first();
+        $position = $st->position;
+        $dept_id = $st->department_id;
+        $st->delete();
+
+        foreach(staff::where('department_id', $dept_id)->where('position', '>', $position)->orderBy('position', 'ASC')->get() as $staff) {
+            $staff->position = $position;
+            $staff->save();
+            $position ++;
+        }
     }
 
     public function render()
