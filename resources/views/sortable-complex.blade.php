@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Livewire Sortable - Complex') }}</div>
 
                 <div class="card-body">
-                    <h4 align="center">COMING SOON</h4>
+                    @livewire('complex-sortable')
                 </div>
             </div>
         </div>

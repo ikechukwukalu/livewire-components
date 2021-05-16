@@ -12,14 +12,14 @@ class BasicSortable extends Component
 {
     public $politicians;
 
-    private function fetch_politicians () {
-        $this->politicians = DB::table('politicians')
+    private function fetch_politicians () : object {
+        return DB::table('politicians')
                             ->join('political_positions', 'political_positions.id', '=', 'politicians.political_position_id')
                             ->select('political_positions.position', 'politicians.*')
                             ->orderBy('politicians.political_position_id', 'ASC')->get();
     }
 
-    public function updatePoliticalPosition ($list) {
+    public function updatePoliticalPosition ($list) : void {
         foreach($list as $item) {
             politician::find($item['value'])->update(['political_position_id' => $item['order']]);
         }
@@ -27,7 +27,7 @@ class BasicSortable extends Component
 
     public function render()
     {
-        $this->fetch_politicians ();
+        $this->politicians = $this->fetch_politicians ();
         return view('livewire.basic-sortable');
     }
 }
