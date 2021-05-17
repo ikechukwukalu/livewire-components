@@ -56,7 +56,7 @@
         }
         return decodeHTMLEntities;
     })();
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("turbolinks:load", () => {
         Livewire.on('emailBody', body => {
             document.getElementById('email-subject').innerHTML = body['getSubject'];
             makeIframe(decodeEntities(body['getHTMLBody']));

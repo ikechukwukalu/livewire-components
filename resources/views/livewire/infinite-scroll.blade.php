@@ -32,7 +32,7 @@
     </div>
 </div>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbolinks:load", () => {
     window.addEventListener("scroll", (e) => {
         var val = document.getElementById('user-scroll').value;
         if ((parseFloat(window.pageYOffset) + parseFloat(window.innerHeight) + parseInt(24)) >= document

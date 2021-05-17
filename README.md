@@ -3,6 +3,7 @@ A LARAVEL 8 APPLICATION UTILIZING LIVEWIRE
 •	<a href="https://github.com/Webklex/laravel-imap">https://github.com/Webklex/laravel-imap</a>\
 •	<a href="https://github.com/livewire/livewire">https://github.com/livewire/livewire</a>\
 •	<a href="https://github.com/beyondcode/laravel-websockets">https://github.com/beyondcode/laravel-websockets</a>\
+•	<a href="https://github.com/turbolinks/turbolinks">https://github.com/turbolinks/turbolinks</a>\
 •	<a href="https://github.com/barryvdh/laravel-debugbar">https://github.com/barryvdh/laravel-debugbar</a>
 ## Quick Start
 •	Clone this repo\

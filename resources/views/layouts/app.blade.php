@@ -6,11 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Livewire Components</title>
+    
+    <script defer src="{{ asset('js/app.js') }}"></script>
 
-    <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}" />
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}" data-turbolinks-track="true"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" data-turbolinks-track="true" />
+
     @livewireStyles
     @livewireScripts
+    <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js" data-turbolinks-eval="false" data-turbo-eval="false"></script>
 </head>
 
 <body class="bg-light">
@@ -70,7 +74,6 @@
         @yield('content')
     </main>
 
-    <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>
 

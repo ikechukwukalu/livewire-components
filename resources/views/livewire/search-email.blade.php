@@ -71,7 +71,7 @@
                     Livewire.emit('NoMoreEmails');
             }
         });
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("turbolinks:load", () => {
             Livewire.on("searchEmailInfinityScroll", (text) => {
                 // @this.search_for_emails(text); //This is the conventional code, but it isn't working, because @this gives off window.livewire.find('')
                 window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).search_for_emails(text); // This is a dirty hack
