@@ -36,56 +36,60 @@ class SearchEmail extends Component
 
     public function search_for_emails(string $text): void
     {
-        $this->page++;
-        $this->scroll = 2;
-
-        $this->cache = 'searchEmail-users.' . $this->page;
-        $messages = Cache::remember($this->cache, $this->cacheTime, function () use ($text) {
-            $client = Client::account('default');
-            $client->connect();
-
-            $folder = $client->getFolderByPath($this->commonFolders[$this->root]);
-
-            $result = $folder->query()
-                ->from($this->email)
-                ->setFetchBody(false)
-                ->fetchOrderDesc()
-                ->text($text)
-                ->leaveUnread()
-                ->paginate($this->take, $this->page);
-
-            $client->disconnect();
-
-            return $result;
-        });
-
-        $i = ($messages->count() * $this->page) - 1;
-
-        if ($i < 1) {
-            $this->page--;
-            $this->scroll = 1;
+        try {
+            $this->page++;
+            $this->scroll = 2;
+    
+            $this->cache = 'searchEmail-users.' . $this->page;
+            $messages = Cache::remember($this->cache, $this->cacheTime, function () use ($text) {
+                $client = Client::account('default');
+                $client->connect();
+    
+                $folder = $client->getFolderByPath($this->commonFolders[$this->root]);
+    
+                $result = $folder->query()
+                    ->from($this->email)
+                    ->setFetchBody(false)
+                    ->fetchOrderDesc()
+                    ->text($text)
+                    ->leaveUnread()
+                    ->paginate($this->take, $this->page);
+    
+                $client->disconnect();
+    
+                return $result;
+            });
+    
+            $i = ($messages->count() * $this->page) - 1;
+    
+            if ($i < 1) {
+                $this->page--;
+                $this->scroll = 1;
+            }
+    
+            foreach ($messages as $message) {
+                $this->results[$i] = [
+                    'uid' => $message->uid,
+                    'getSubject' => trim($message->getSubject()),
+                ];
+                $i--;
+            }
+    
+            $number_of_results = count($this->results);
+    
+            if ($this->search_length >= $number_of_results) {
+                $this->no_more_emails();
+            }
+    
+            $this->search_length = $number_of_results;
+    
+            $page = $this->page + 1;
+            $cache = 'searchEmail-users.' . $page;
+    
+            searchEmailCacheNextPage::dispatchIf(!Cache::has($cache), $cache, $page, $this->take, $this->cacheTime, $this->commonFolders, $this->root, $this->email, $text);
+        }  catch (\Webklex\PHPIMAP\Exceptions\ConnectionFailedException | \Exception $e) {
+            session()->flash('danger', 'Connection failed');
         }
-
-        foreach ($messages as $message) {
-            $this->results[$i] = [
-                'uid' => $message->uid,
-                'getSubject' => trim($message->getSubject()),
-            ];
-            $i--;
-        }
-
-        $number_of_results = count($this->results);
-
-        if ($this->search_length >= $number_of_results) {
-            $this->no_more_emails();
-        }
-
-        $this->search_length = $number_of_results;
-
-        $page = $this->page + 1;
-        $cache = 'searchEmail-users.' . $page;
-
-        searchEmailCacheNextPage::dispatchIf(!Cache::has($cache), $cache, $page, $this->take, $this->cacheTime, $this->commonFolders, $this->root, $this->email, $text);
     }
 
     public function imap_email_body(int $uid): void
