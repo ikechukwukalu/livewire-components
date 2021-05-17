@@ -54,32 +54,36 @@ class searchEmailCacheNextPage implements ShouldQueue
     public function handle()
     {
         //
-        DB::disableQueryLog();
-        $start = microtime(true);
-
-        $time_elapsed_secs = microtime(true) - $start;
-        echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
-
-        $messages = Cache::remember($this->cache, $this->cacheTime, function () {
-            $client = Client::account('default');
-            $client->connect();
-
-            $folder = $client->getFolderByPath($this->commonFolders[$this->root]);
-
-            $result = $folder->query()
-                ->from($this->email)
-                ->setFetchBody(false)
-                ->fetchOrderDesc()
-                ->text($this->text)
-                ->leaveUnread()
-                ->paginate($this->take, $this->page);
-
-            $client->disconnect();
-
-            return $result;
-        });
-
-        $time_elapsed_secs = microtime(true) - $start;
-        echo "Part 2: " . $time_elapsed_secs . ", Fetched next list of emails " . " \n";
+        try {
+            DB::disableQueryLog();
+            $start = microtime(true);
+    
+            $time_elapsed_secs = microtime(true) - $start;
+            echo "Part 1: " . $time_elapsed_secs . ", Cache key: " . $this->cache . " \n";
+    
+            $messages = Cache::remember($this->cache, $this->cacheTime, function () {
+                $client = Client::account('default');
+                $client->connect();
+    
+                $folder = $client->getFolderByPath($this->commonFolders[$this->root]);
+    
+                $result = $folder->query()
+                    ->from($this->email)
+                    ->setFetchBody(false)
+                    ->fetchOrderDesc()
+                    ->text($this->text)
+                    ->leaveUnread()
+                    ->paginate($this->take, $this->page);
+    
+                $client->disconnect();
+    
+                return $result;
+            });
+    
+            $time_elapsed_secs = microtime(true) - $start;
+            echo "Part 2: " . $time_elapsed_secs . ", Fetched next list of emails " . " \n";
+        } catch (\Webklex\PHPIMAP\Exceptions\ConnectionFailedException | \Exception $e) {
+            echo "Error encountered" . " \n";
+        }
     }
 }
