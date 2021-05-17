@@ -60,8 +60,19 @@
         Livewire.on('emailBody', body => {
             document.getElementById('email-subject').innerHTML = body['getSubject'];
             makeIframe(decodeEntities(body['getHTMLBody']));
-            if(body['cacheProblem']) {
+            if (body['cacheProblem']) {
                 @this.cacheProblem()
+            }
+        });
+        document.getElementById('search-dropdown-menu').addEventListener("scroll", (e) => {
+            var val = document.getElementById('search-scroll').value;
+            var element = e.target;
+            if ((parseFloat(element.scrollTop) + parseFloat(element.offsetHeight)) >= element
+                .scrollHeight) {
+                if (parseInt(val) === 2)
+                    Livewire.emit('searchEmailInfinityScroll', val);
+                else
+                    Livewire.emit('NoMoreEmails');
             }
         });
     });

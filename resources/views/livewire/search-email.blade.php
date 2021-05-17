@@ -61,24 +61,14 @@
             </div>
         </div>
         <script>
-        document.querySelector('.dropdown-search-menu').addEventListener("scroll", (e) => {
-            var val = document.getElementById('search-scroll').value;
-            var element = e.target;
-            if ((parseFloat(element.scrollTop) + parseFloat(element.offsetHeight)) >= element.scrollHeight) {
-                if (val == 2)
-                    Livewire.emit('searchEmailInfinityScroll', val);
-                else
-                    Livewire.emit('NoMoreEmails');
-            }
-        });
         document.addEventListener("turbolinks:load", () => {
             Livewire.on("searchEmailInfinityScroll", (text) => {
-                // @this.search_for_emails(text); //This is the conventional code, but it isn't working, because @this gives off window.livewire.find('')
-                window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).search_for_emails(text); // This is a dirty hack
+                @this.search_for_emails(text); //This is the conventional code.
+                // window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).search_for_emails(text); // This is a dirty hack
             });
             Livewire.on("NoMoreEmails", () => {
-                // @this.no_more_emails(); //This is the conventional code, but it isn't working, because @this gives off window.livewire.find('')
-                window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).no_more_emails(); // This is a dirty hack
+                @this.no_more_emails(); //This is the conventional code.
+                // window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).no_more_emails(); // This is a dirty hack
             });
         });
         </script>
