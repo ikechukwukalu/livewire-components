@@ -5,6 +5,12 @@ A LARAVEL 8 APPLICATION UTILIZING LIVEWIRE
 •	<a href="https://github.com/beyondcode/laravel-websockets">https://github.com/beyondcode/laravel-websockets</a>\
 •	<a href="https://github.com/turbolinks/turbolinks">https://github.com/turbolinks/turbolinks</a>\
 •	<a href="https://github.com/barryvdh/laravel-debugbar">https://github.com/barryvdh/laravel-debugbar</a>
+## Livewire Components
+•	Datatable\
+•	IMAP Emails\
+•	Infinite Scroll\
+•	Sortable List - Basic\
+•	Sortable List - Complex
 ## Quick Start
 •	Clone this repo\
 •	``copy .env.example .env``\
