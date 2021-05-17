@@ -41,6 +41,9 @@ class SearchEmail extends Component
             $this->scroll = 2;
     
             $this->cache = 'searchEmail-users.' . $this->page;
+            // if (Cache::has($this->cache)) {
+            //     Cache::forget($this->cache);
+            // }
             $messages = Cache::remember($this->cache, $this->cacheTime, function () use ($text) {
                 $client = Client::account('default');
                 $client->connect();

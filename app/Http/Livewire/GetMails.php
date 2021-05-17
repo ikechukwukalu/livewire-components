@@ -31,6 +31,9 @@ class GetMails extends Component
         try {
             $this->webmails = [];
             $this->cache = 'getEmail-users.' . $this->page;
+            // if (Cache::has($this->cache)) {
+            //     Cache::forget($this->cache);
+            // }
             $messages = Cache::remember($this->cache, $this->cacheTime, function () {
                 $client = Client::account('default');
                 $client->connect();
