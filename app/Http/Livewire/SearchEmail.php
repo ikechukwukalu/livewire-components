@@ -71,11 +71,10 @@ class SearchEmail extends Component
             }
     
             foreach ($messages as $message) {
-                $this->results[$i] = [
+                $this->results[] = [
                     'uid' => $message->uid,
                     'getSubject' => trim($message->getSubject()),
                 ];
-                $i--;
             }
     
             $number_of_results = count($this->results);
