@@ -550,7 +550,7 @@ function init_responsive_table() {
     cellVisibility();
 }
 
-document.addEventListener("turbolinks:load", () => {
+document.addEventListener("DOMContentLoaded", () => {
     Livewire.on('showPage', page => {
         document.getElementById('card-header').innerHTML =
             'Livewire Datatable - <b>Page:</b> ' + page;

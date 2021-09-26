@@ -16,9 +16,7 @@ try {
     window.pdfMake = require("pdfMake");
     window.TableToExcel = require('table-to-excel');
     window.ExportToCsv = require('export-to-csv').ExportToCsv;
-
-    var Turbolinks = require("turbolinks"); 
-    Turbolinks.start();
+    
 } catch (e) { }
 
 /**

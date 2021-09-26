@@ -9,12 +9,11 @@
     
     <script defer src="{{ asset('js/app.js') }}"></script>
 
-    <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}" data-turbolinks-track="true"/>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" data-turbolinks-track="true" />
+    <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}" />
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
 
     @livewireStyles
     @livewireScripts
-    <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js" data-turbolinks-eval="false" data-turbo-eval="false"></script>
 </head>
 
 <body class="bg-light">

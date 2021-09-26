@@ -64,7 +64,7 @@
 </div>
 
 <script>
-document.addEventListener("turbolinks:load", () => {
+document.addEventListener("DOMContentLoaded", () => {
     Livewire.on("editUser", (obj) => {
         var modalBackDrop = document.createElement("div");
         modalBackDrop.setAttribute('id', 'modal-backdrop');

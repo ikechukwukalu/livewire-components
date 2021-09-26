@@ -61,7 +61,7 @@
             </div>
         </div>
         <script>
-        document.addEventListener("turbolinks:load", () => {
+        document.addEventListener("DOMContentLoaded", () => {
             Livewire.on("searchEmailInfinityScroll", (text) => {
                 @this.search_for_emails(text); //This is the conventional code.
                 // window.livewire.find(document.getElementById('search-email-root').getAttribute('wire:id')).search_for_emails(text); // This is a dirty hack
